@@ -18,6 +18,7 @@
             --btn-bg: rgba(255, 255, 255, 0.05);
             --btn-border: rgba(255, 255, 255, 0.2);
             --btn-text: rgba(255, 255, 255, 0.7);
+            --win-color: #44cc44;
         }
 
         .light-theme {
@@ -43,7 +44,6 @@
             justify-content: center;
             align-items: center;
             transition: background 0.5s;
-            position: relative;
             overflow-x: hidden;
         }
 
@@ -58,7 +58,6 @@
                 radial-gradient(ellipse at 20% 20%, #fb5607 0%, transparent 50%);
             animation: bgShift 15s ease-in-out infinite alternate;
             opacity: 0.6;
-            transition: opacity 0.5s;
         }
 
         .light-theme .bg-animation { opacity: 0.15; }
@@ -208,7 +207,6 @@
         }
 
         .cell:active { transform: scale(0.95); }
-
         .cell.x { color: #ff006e; text-shadow: 0 0 20px rgba(255,0,110,0.8); animation: popIn 0.3s ease; }
         .cell.o { color: #3a86ff; text-shadow: 0 0 20px rgba(58,134,255,0.8); animation: popIn 0.3s ease; }
 
@@ -232,7 +230,7 @@
 
         @keyframes winCelebrate {
             0% { transform: scale(1); }
-            100% { transform: scale(1.08); box-shadow: 0 0 40px rgba(255,255,255,0.6); }
+            100% { transform: scale(1.08); box-shadow: 0 0 40px rgba(68,204,68,0.8); }
         }
 
         .status {
@@ -243,6 +241,23 @@
             display: flex; align-items: center; justify-content: center;
         }
 
+        .turn-indicator {
+            display: flex; justify-content: center; gap: 20px;
+            margin: 10px 0; font-size: 0.7em;
+        }
+
+        .turn-dot {
+            padding: 8px 16px; border-radius: 20px;
+            background: var(--settings-bg); border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .turn-dot.active {
+            background: linear-gradient(135deg, #ff006e, #3a86ff);
+            color: white; border-color: transparent;
+            box-shadow: 0 0 20px rgba(255,0,110,0.4);
+        }
+
         .room-info {
             text-align: center; color: var(--text); font-size: 0.65em;
             margin: 8px 0; padding: 10px; background: var(--settings-bg);
@@ -250,10 +265,10 @@
         }
 
         .copy-btn {
-            display: inline-block; padding: 6px 12px;
-            background: var(--btn-bg); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--btn-text); cursor: pointer;
-            font-family: 'Orbitron', sans-serif; font-size: 0.65em; margin: 5px;
+            display: inline-block; padding: 8px 14px;
+            background: linear-gradient(135deg, #ff006e, #3a86ff);
+            border: none; border-radius: 8px; color: white; cursor: pointer;
+            font-family: 'Orbitron', sans-serif; font-size: 0.7em; margin: 5px;
         }
 
         .join-input {
@@ -280,6 +295,9 @@
             border-radius: 8px; word-break: break-word;
         }
 
+        .chat-message.you { border-left: 3px solid #ff006e; }
+        .chat-message.opponent { border-left: 3px solid #3a86ff; }
+
         .chat-input-row { display: flex; gap: 6px; }
 
         .chat-input {
@@ -295,6 +313,19 @@
             font-family: 'Orbitron', sans-serif; font-size: 0.7em;
             font-weight: 700; cursor: pointer;
         }
+
+        .scoreboard {
+            display: flex; justify-content: center; gap: 15px;
+            margin: 10px 0; font-size: 0.7em;
+        }
+
+        .score {
+            text-align: center; padding: 8px 12px;
+            background: var(--settings-bg); border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .score span { font-size: 1.5em; font-weight: 900; }
 
         .reset-btn {
             width: 100%; padding: 14px; background: var(--btn-bg);
@@ -360,6 +391,17 @@
 
         <div class="room-info hidden" id="roomInfo"></div>
 
+        <div class="turn-indicator hidden" id="turnIndicator">
+            <div class="turn-dot" id="dotYou">😎 Вы (✕)</div>
+            <div class="turn-dot" id="dotOpp">🎯 Игрок 2 (○)</div>
+        </div>
+
+        <div class="scoreboard hidden" id="scoreboard">
+            <div class="score">😎 Вы<br><span id="scoreYou">0</span></div>
+            <div class="score">🤝 Ничьи<br><span id="scoreDraw">0</span></div>
+            <div class="score">🎯 Игрок 2<br><span id="scoreOpp">0</span></div>
+        </div>
+
         <div class="board" id="board">
             <div class="cell" onclick="cellClick(0)"></div>
             <div class="cell" onclick="cellClick(1)"></div>
@@ -388,22 +430,21 @@
     </div>
 
     <script>
-        // ============ ОСНОВНАЯ ИГРА (работает всегда) ============
         function spawnConfetti() {
             const container = document.getElementById('confetti');
-            const colors = ['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4'];
-            for(let i=0;i<60;i++){
+            const colors = ['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4','#44cc44'];
+            for(let i=0;i<80;i++){
                 setTimeout(()=>{
                     const c=document.createElement('div');
                     c.className='confetti';
                     c.style.left=Math.random()*100+'%';
                     c.style.background=colors[Math.floor(Math.random()*colors.length)];
-                    c.style.width=(Math.random()*10+5)+'px';
-                    c.style.height=(Math.random()*10+5)+'px';
+                    c.style.width=(Math.random()*12+6)+'px';
+                    c.style.height=(Math.random()*12+6)+'px';
                     c.style.animationDuration=(Math.random()*2+2)+'s';
                     container.appendChild(c);
                     setTimeout(()=>c.remove(),3000);
-                },i*15);
+                },i*10);
             }
         }
 
@@ -424,6 +465,7 @@
         let board=['','','','','','','','',''];
         let gameActive=false,waitingForOpponent=false;
         let currentMode='calc';
+        let scores={you:0,opp:0,draw:0};
 
         function switchMode(mode){
             if(window._onlineChannel){
@@ -441,6 +483,8 @@
             const firstMoveBlock=document.getElementById('firstMoveBlock');
             const roomInfo=document.getElementById('roomInfo');
             const chatSection=document.getElementById('chatSection');
+            const turnIndicator=document.getElementById('turnIndicator');
+            const scoreboard=document.getElementById('scoreboard');
             
             board=['','','','','','','','',''];
             gameActive=false;
@@ -453,6 +497,8 @@
                 firstMoveBlock.classList.add('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
+                turnIndicator.classList.add('hidden');
+                scoreboard.classList.add('hidden');
                 playerSymbol='X';opponentSymbol='O';
                 gameActive=true;
                 setStatus('🤖 Ваш ход! Вы ✕');
@@ -461,20 +507,28 @@
                 firstMoveBlock.classList.add('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
+                turnIndicator.classList.remove('hidden');
+                scoreboard.classList.add('hidden');
                 playerSymbol='X';opponentSymbol='O';
                 gameActive=true;
+                updateTurnIndicator('X');
                 setStatus('👥 Ходит ✕');
             }else if(mode==='online'){
                 symbolBlock.classList.add('hidden');
                 firstMoveBlock.classList.add('hidden');
                 roomInfo.classList.remove('hidden');
                 chatSection.classList.remove('hidden');
+                turnIndicator.classList.remove('hidden');
+                scoreboard.classList.remove('hidden');
+                updateScores();
                 initOnlineMode();
             }else{
                 symbolBlock.classList.remove('hidden');
                 firstMoveBlock.classList.remove('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
+                turnIndicator.classList.add('hidden');
+                scoreboard.classList.add('hidden');
                 playerSymbol=null;opponentSymbol=null;firstMove=null;
                 document.getElementById('btnX').className='btn';
                 document.getElementById('btnO').className='btn';
@@ -482,6 +536,24 @@
                 document.getElementById('btnOpp').className='btn';
                 setStatus('Выберите символ и кто первый');
             }
+        }
+
+        function updateTurnIndicator(symbol){
+            const dotYou=document.getElementById('dotYou');
+            const dotOpp=document.getElementById('dotOpp');
+            dotYou.className='turn-dot';
+            dotOpp.className='turn-dot';
+            if(symbol===playerSymbol||symbol===window._onlinePlayerSymbol){
+                dotYou.classList.add('active');
+            }else{
+                dotOpp.classList.add('active');
+            }
+        }
+
+        function updateScores(){
+            document.getElementById('scoreYou').textContent=scores.you;
+            document.getElementById('scoreOpp').textContent=scores.opp;
+            document.getElementById('scoreDraw').textContent=scores.draw;
         }
 
         function cellClick(index){
@@ -519,9 +591,17 @@
                 const cs=moves%2===0?'X':'O';
                 board[index]=cs;
                 updateBoard();
-                if(checkWinner(cs)){highlightWinCells(cs);setStatus('🎉 '+cs+' выиграл!');spawnConfetti();gameActive=false;return;}
+                if(checkWinner(cs)){
+                    highlightWinCells(cs);
+                    setStatus('🎉 '+cs+' выиграл!');
+                    spawnConfetti();
+                    gameActive=false;
+                    return;
+                }
                 if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return;}
-                setStatus('👥 Ходит '+(moves%2===0?'○':'✕'));
+                const next=moves%2===0?'○':'✕';
+                updateTurnIndicator(next==='✕'?'X':'O');
+                setStatus('👥 Ходит '+next);
                 return;
             }
 
@@ -662,13 +742,14 @@
                 setStatus('🤖 Ваш ход! Вы ✕');
             }else if(currentMode==='friend'){
                 gameActive=true;
-                playerSymbol='X';opponentSymbol='O';
                 waitingForOpponent=false;
+                updateTurnIndicator('X');
                 setStatus('👥 Ходит ✕');
             }else if(currentMode==='online'){
                 gameActive=true;
                 waitingForOpponent=window._onlinePlayerSymbol==='O';
-                setStatus(waitingForOpponent?'🎯 Ход соперника':'🤔 Ваш ход');
+                updateTurnIndicator(waitingForOpponent?'O':window._onlinePlayerSymbol);
+                setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход');
                 if(!waitingForOpponent) broadcastMove(null);
             }else if(currentMode==='calc'){
                 gameActive=false;
@@ -678,10 +759,10 @@
             }
         }
 
-        // ============ ОНЛАЙН РЕЖИМ (загружается отдельно) ============
+        // ============ ОНЛАЙН ============
         function initOnlineMode(){
             if(!window.supabase){
-                document.getElementById('roomInfo').innerHTML='⏳ Загрузка онлайн режима...';
+                document.getElementById('roomInfo').innerHTML='⏳ Загрузка...';
                 loadSupabase();
                 return;
             }
@@ -699,7 +780,7 @@
                 setupOnline();
             };
             script.onerror=()=>{
-                document.getElementById('roomInfo').innerHTML='❌ Не удалось загрузить онлайн режим';
+                document.getElementById('roomInfo').innerHTML='❌ Ошибка загрузки';
             };
             document.head.appendChild(script);
         }
@@ -711,10 +792,14 @@
             if(joinRoom){
                 window._onlineRoomId=joinRoom;
                 window._onlinePlayerSymbol='O';
+                document.getElementById('dotYou').textContent='😎 Вы (○)';
+                document.getElementById('dotOpp').textContent='🎯 Игрок 1 (✕)';
                 joinOnlineRoom();
             }else{
                 window._onlineRoomId=Math.random().toString(36).substr(2,6);
                 window._onlinePlayerSymbol='X';
+                document.getElementById('dotYou').textContent='😎 Вы (✕)';
+                document.getElementById('dotOpp').textContent='🎯 Игрок 2 (○)';
                 createOnlineRoom();
             }
         }
@@ -739,6 +824,7 @@
             
             subscribeToRoom();
             gameActive=true;
+            updateTurnIndicator('X');
             setStatus('🌐 Ожидание соперника...');
         }
 
@@ -754,12 +840,13 @@
                     subscribeToRoom();
                     gameActive=true;
                     waitingForOpponent=true;
-                    setStatus('🎯 Ход соперника (X)');
+                    updateTurnIndicator('X');
+                    setStatus('🎯 Ход соперника (✕)');
                 }else{
                     document.getElementById('roomInfo').innerHTML='❌ Комната не найдена';
                 }
             }catch(e){
-                document.getElementById('roomInfo').innerHTML='❌ Ошибка подключения';
+                document.getElementById('roomInfo').innerHTML='❌ Ошибка';
             }
         }
 
@@ -774,21 +861,32 @@
                     
                     if(data.winner){
                         highlightWinCells(data.winner);
-                        setStatus(data.winner===window._onlinePlayerSymbol?'🎉 Вы выиграли!':'😞 Соперник выиграл');
+                        if(data.winner===window._onlinePlayerSymbol){
+                            setStatus('🎉 Вы выиграли!');
+                            scores.you++;
+                        }else{
+                            setStatus('😞 Соперник выиграл');
+                            scores.opp++;
+                        }
+                        updateScores();
                         spawnConfetti();
                         gameActive=false;
                     }else if(isBoardFull()){
                         setStatus('🤝 Ничья!');
+                        scores.draw++;
+                        updateScores();
                         gameActive=false;
                     }else{
                         waitingForOpponent=data.turn!==window._onlinePlayerSymbol;
-                        setStatus(waitingForOpponent?'🎯 Ход соперника':'🤔 Ваш ход');
+                        updateTurnIndicator(data.turn);
+                        setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход');
                     }
                 })
                 .on('broadcast',{event:'chat'},(payload)=>{
                     const msg=payload.payload;
                     const container=document.getElementById('chatMessages');
-                    container.innerHTML+=`<div class="chat-message"><b>${msg.player}:</b> ${msg.text}</div>`;
+                    const cls=msg.player===window._onlinePlayerSymbol?'chat-message you':'chat-message opponent';
+                    container.innerHTML+=`<div class="${cls}"><b>${msg.player===window._onlinePlayerSymbol?'Вы':(window._onlinePlayerSymbol==='X'?'Игрок 2':'Игрок 1')}:</b> ${msg.text}</div>`;
                     container.scrollTop=container.scrollHeight;
                 })
                 .subscribe();
@@ -815,7 +913,7 @@
             });
             
             const container=document.getElementById('chatMessages');
-            container.innerHTML+=`<div class="chat-message"><b>Вы:</b> ${text}</div>`;
+            container.innerHTML+=`<div class="chat-message you"><b>Вы:</b> ${text}</div>`;
             container.scrollTop=container.scrollHeight;
             input.value='';
         }
@@ -840,14 +938,24 @@
             if(checkWinner(window._onlinePlayerSymbol)){
                 highlightWinCells(window._onlinePlayerSymbol);
                 setStatus('🎉 Вы выиграли!');
+                scores.you++;
+                updateScores();
                 spawnConfetti();
                 gameActive=false;
                 broadcastMove(window._onlinePlayerSymbol);
                 return;
             }
-            if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;broadcastMove(null);return;}
+            if(isBoardFull()){
+                setStatus('🤝 Ничья!');
+                scores.draw++;
+                updateScores();
+                gameActive=false;
+                broadcastMove(null);
+                return;
+            }
             
             waitingForOpponent=true;
+            updateTurnIndicator(opponentSymbol||'O');
             setStatus('🎯 Ход соперника');
             broadcastMove(null);
         }
