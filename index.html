@@ -3,514 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>XO Assistant - by Sonki</title>
+    <title>XO Assistant — Sonki</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        
         :root {
-            --bg: #0a0a0a;
-            --bg2: rgba(10, 10, 20, 0.7);
-            --text: rgba(255, 255, 255, 0.8);
-            --border: rgba(255, 255, 255, 0.1);
-            --cell-bg: rgba(20, 20, 30, 0.8);
-            --settings-bg: rgba(255, 255, 255, 0.05);
-            --status-bg: rgba(255, 255, 255, 0.05);
-            --btn-bg: rgba(255, 255, 255, 0.05);
-            --btn-border: rgba(255, 255, 255, 0.2);
-            --btn-text: rgba(255, 255, 255, 0.7);
+            --bg: #0d0d0d;
+            --bg-card: #1a1a1a;
+            --text: #ffffff;
+            --text2: #999;
+            --accent: #6c5ce7;
+            --accent2: #00cec9;
+            --x-color: #ff6b6b;
+            --o-color: #74b9ff;
+            --win-color: #00b894;
+            --border: #2a2a2a;
+            --cell-bg: #141414;
+            --btn-bg: #1e1e1e;
+            --hover: #252525;
+            --shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-
+        
         .light-theme {
-            --bg: #f0f2f5;
-            --bg2: rgba(255, 255, 255, 0.8);
-            --text: #1a1a1a;
-            --border: rgba(0, 0, 0, 0.1);
-            --cell-bg: #ffffff;
-            --settings-bg: rgba(255, 255, 255, 0.8);
-            --status-bg: rgba(255, 255, 255, 0.8);
+            --bg: #f8f9fa;
+            --bg-card: #ffffff;
+            --text: #1a1a2e;
+            --text2: #666;
+            --border: #e0e0e0;
+            --cell-bg: #f1f3f5;
             --btn-bg: #ffffff;
-            --btn-border: rgba(0, 0, 0, 0.2);
-            --btn-text: #333;
+            --hover: #f1f3f5;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
         }
-
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         body {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background 0.5s;
-            overflow-x: hidden;
+            transition: all 0.4s;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(108,92,231,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0,206,201,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255,107,107,0.05) 0%, transparent 50%);
         }
-
-        .bg-animation {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 0;
-            background: 
-                radial-gradient(ellipse at 20% 50%, #ff006e 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, #3a86ff 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, #8338ec 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, #ffbe0b 0%, transparent 50%),
-                radial-gradient(ellipse at 20% 20%, #fb5607 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite alternate;
-            opacity: 0.6;
-        }
-
-        .light-theme .bg-animation { opacity: 0.15; }
-
-        @keyframes bgShift {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.5) rotate(5deg); }
-            100% { transform: scale(1.2) rotate(-5deg); }
-        }
-
-        .confetti-container {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none; z-index: 100;
-        }
-
-        .confetti {
-            position: absolute; width: 12px; height: 12px;
-            animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-
-        .theme-toggle {
-            position: fixed; top: 20px; right: 20px; z-index: 200;
-            width: 45px; height: 45px; border-radius: 50%;
-            background: var(--bg2); border: 1px solid var(--border);
-            cursor: pointer; font-size: 1.3em;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text); backdrop-filter: blur(20px);
-        }
-
+        
         .container {
-            position: relative; z-index: 10;
-            background: var(--bg2); backdrop-filter: blur(30px);
-            border: 1px solid var(--border); border-radius: 25px;
-            padding: 20px; width: 95%; max-width: 500px;
-            box-shadow: 0 0 50px rgba(255,0,110,0.3);
-            margin: 20px auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 28px 24px;
+            width: 95%;
+            max-width: 440px;
+            box-shadow: var(--shadow);
+            transition: all 0.4s;
         }
-
-        .mode-tabs {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 3px; margin-bottom: 15px;
-            background: var(--settings-bg); border-radius: 12px; padding: 3px;
+        
+        .theme-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
-
-        .mode-tab {
-            padding: 10px 4px; border: none; border-radius: 10px;
-            background: transparent; color: var(--btn-text);
-            cursor: pointer; font-family: 'Orbitron', sans-serif;
-            font-size: 0.55em; font-weight: 700;
-            transition: all 0.3s; text-align: center; line-height: 1.2;
+        .theme-btn:hover { transform: scale(1.08); border-color: var(--accent); }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 6px;
+            font-size: 2em;
+            font-weight: 900;
+            letter-spacing: -1px;
         }
-
-        .mode-tab.active {
-            background: linear-gradient(135deg, #ff006e, #3a86ff);
-            color: white;
+        .logo span:first-child { color: var(--x-color); }
+        .logo span:last-child { color: var(--o-color); }
+        
+        .badge {
+            text-align: center;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: var(--text2);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
         }
-
-        .title {
-            text-align: center; margin-bottom: 10px;
-            font-size: 1.8em; font-weight: 900;
-            background: linear-gradient(135deg, #ff006e, #3a86ff, #8338ec, #ffbe0b);
-            background-size: 300% 300%;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; animation: gradientShift 5s ease infinite;
+        
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: var(--cell-bg);
+            border-radius: 14px;
+            padding: 4px;
         }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .tab {
+            flex: 1;
+            padding: 10px 6px;
+            border: none;
+            border-radius: 11px;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7em;
+            font-weight: 700;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: -0.3px;
         }
-
-        .subtitle {
-            text-align: center; color: var(--btn-text);
-            font-size: 0.6em; margin-top: -8px; margin-bottom: 15px;
-            letter-spacing: 3px;
+        .tab.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(108,92,231,0.3);
         }
-
-        .settings-block {
-            background: var(--settings-bg); border: 1px solid var(--border);
-            border-radius: 18px; padding: 15px; margin-bottom: 10px;
+        .tab:hover:not(.active) { color: var(--text); }
+        
+        .settings-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
         }
-
-        .settings-label {
-            color: var(--text); font-size: 0.75em; font-weight: 700;
-            margin-bottom: 8px; letter-spacing: 2px; text-transform: uppercase;
+        .settings-row .btn {
+            flex: 1;
+            padding: 11px 10px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--btn-bg);
+            color: var(--text);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78em;
+            font-weight: 600;
+            transition: all 0.25s;
+            text-align: center;
         }
-
-        .button-row { display: flex; gap: 8px; }
-
-        .btn {
-            flex: 1; padding: 12px 8px;
-            border: 2px solid var(--btn-border); border-radius: 12px;
-            background: var(--btn-bg); color: var(--btn-text);
-            cursor: pointer; font-family: 'Orbitron', sans-serif;
-            font-size: 0.75em; font-weight: 700; letter-spacing: 1px;
-            transition: all 0.3s; text-transform: uppercase;
+        .settings-row .btn:hover { border-color: var(--accent); background: var(--hover); }
+        .settings-row .btn.sel-x { background: var(--x-color); border-color: var(--x-color); color: #fff; }
+        .settings-row .btn.sel-o { background: var(--o-color); border-color: var(--o-color); color: #fff; }
+        .settings-row .btn.sel-first { background: var(--accent); border-color: var(--accent); color: #fff; }
+        
+        .label-sm {
+            font-size: 0.7em;
+            font-weight: 700;
+            color: var(--text2);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
         }
-
-        .btn.active-x {
-            background: linear-gradient(135deg, #ff006e, #ff4d6d);
-            border-color: #ff006e; color: white;
-        }
-
-        .btn.active-o {
-            background: linear-gradient(135deg, #3a86ff, #4d9fff);
-            border-color: #3a86ff; color: white;
-        }
-
-        .btn.active-first {
-            background: linear-gradient(135deg, #8338ec, #9d5cff);
-            border-color: #8338ec; color: white;
-        }
-
-        .board {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 8px; margin: 15px 0; padding: 10px;
-            background: rgba(255,255,255,0.03); border-radius: 18px;
-            border: 1px solid var(--border); position: relative;
-        }
-
-        .board::before {
-            content: ''; position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
+        
+        .board-wrap {
+            background: var(--cell-bg);
             border-radius: 20px;
-            background: linear-gradient(45deg, #ff006e, #3a86ff, #8338ec, #ffbe0b);
-            z-index: -1; animation: borderRotate 4s linear infinite; opacity: 0.5;
+            padding: 10px;
+            margin: 16px 0;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
         }
-
-        @keyframes borderRotate {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        .board-wrap::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, var(--accent), var(--accent2), var(--x-color), var(--accent));
+            animation: spin 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
         }
-
+        .board-wrap.thinking::after { opacity: 0.08; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
         .cell {
-            aspect-ratio: 1; background: var(--cell-bg);
-            border: 2px solid var(--border); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2em; font-weight: 900; cursor: pointer;
-            transition: all 0.2s; position: relative;
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+            position: relative;
         }
-
-        .cell:active { transform: scale(0.95); }
-        .cell.x { color: #ff006e; text-shadow: 0 0 20px rgba(255,0,110,0.8); animation: popIn 0.3s ease; }
-        .cell.o { color: #3a86ff; text-shadow: 0 0 20px rgba(58,134,255,0.8); animation: popIn 0.3s ease; }
-
-        @keyframes popIn {
-            0% { transform: scale(1.3); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .cell:active { transform: scale(0.94); }
+        .cell.X { color: var(--x-color); animation: pop 0.35s cubic-bezier(0.4,0,0.2,1); }
+        .cell.O { color: var(--o-color); animation: pop 0.35s cubic-bezier(0.4,0,0.2,1); }
+        @keyframes pop { 0% { transform: scale(1.35); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .cell.hint {
+            border-color: var(--accent2) !important;
+            box-shadow: 0 0 25px rgba(0,206,201,0.3);
+            animation: hintPulse 1.5s ease-in-out infinite;
         }
-
-        .cell.suggestion {
-            animation: suggestGlow 1s ease-in-out infinite;
-            border-color: #ffbe0b !important;
-            background: rgba(255,190,11,0.2) !important;
+        @keyframes hintPulse { 0%,100% { box-shadow: 0 0 15px rgba(0,206,201,0.2); } 50% { box-shadow: 0 0 35px rgba(0,206,201,0.5); } }
+        .cell.win-cell { animation: winBounce 0.5s ease-in-out infinite alternate; }
+        @keyframes winBounce { 0% { transform: scale(1); } 100% { transform: scale(1.06); box-shadow: 0 0 30px var(--win-color); } }
+        
+        .turn-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
         }
-
-        @keyframes suggestGlow {
-            0%,100% { box-shadow: 0 0 20px rgba(255,190,11,0.5); }
-            50% { box-shadow: 0 0 40px rgba(255,190,11,0.8); }
+        .turn-item {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            background: var(--cell-bg);
+            text-align: center;
+            font-size: 0.72em;
+            font-weight: 700;
+            color: var(--text2);
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
-
-        .cell.win { animation: winCelebrate 0.4s ease-in-out infinite alternate; }
-
-        @keyframes winCelebrate {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.08); box-shadow: 0 0 40px rgba(68,204,68,0.8); }
+        .turn-item.active {
+            border-color: var(--accent);
+            color: var(--text);
+            background: var(--btn-bg);
+            box-shadow: 0 0 20px rgba(108,92,231,0.2);
         }
-
-        .status {
-            text-align: center; padding: 12px; margin: 12px 0;
-            background: var(--status-bg); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text); font-size: 0.75em;
-            font-weight: 500; min-height: 40px;
-            display: flex; align-items: center; justify-content: center;
+        
+        .status-msg {
+            text-align: center;
+            padding: 12px;
+            margin: 10px 0;
+            background: var(--cell-bg);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 0.78em;
+            font-weight: 600;
         }
-
-        .turn-indicator {
-            display: flex; justify-content: center; gap: 15px;
-            margin: 10px 0; font-size: 0.7em;
+        
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            background: var(--btn-bg);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78em;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            text-transform: uppercase;
         }
-
-        .turn-dot {
-            padding: 8px 16px; border-radius: 20px;
-            background: var(--settings-bg); border: 1px solid var(--border);
+        .btn-main:hover { border-color: var(--accent); background: var(--hover); }
+        
+        .room-box {
+            background: var(--cell-bg);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 0.72em;
+            color: var(--text);
+        }
+        .room-box .code { font-size: 1.4em; font-weight: 900; letter-spacing: 2px; color: var(--accent2); }
+        .room-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75em;
+            text-align: center;
+            outline: none;
+        }
+        .btn-copy {
+            display: inline-block;
+            padding: 10px 18px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
             transition: all 0.3s;
         }
-
-        .turn-dot.active {
-            background: linear-gradient(135deg, #ff006e, #3a86ff);
-            color: white; border-color: transparent;
-            box-shadow: 0 0 20px rgba(255,0,110,0.4);
+        .btn-copy:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .chat-box {
+            background: var(--cell-bg);
+            border-radius: 14px;
+            padding: 12px;
+            margin-top: 10px;
         }
-
-        .room-info {
-            text-align: center; color: var(--text); font-size: 0.65em;
-            margin: 8px 0; padding: 10px; background: var(--settings-bg);
-            border-radius: 10px;
+        .chat-msgs {
+            height: 90px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: var(--bg-card);
+            border-radius: 8px;
         }
-
-        .copy-btn {
-            display: inline-block; padding: 8px 14px;
-            background: linear-gradient(135deg, #ff006e, #3a86ff);
-            border: none; border-radius: 8px; color: white; cursor: pointer;
-            font-family: 'Orbitron', sans-serif; font-size: 0.7em; margin: 5px;
+        .chat-msg {
+            font-size: 0.68em;
+            margin-bottom: 4px;
+            padding: 6px 10px;
+            background: var(--cell-bg);
+            border-radius: 8px;
+            color: var(--text);
         }
-
-        .join-input {
-            width: 100%; padding: 8px; margin: 5px 0;
-            background: var(--btn-bg); border: 1px solid var(--border);
-            border-radius: 8px; color: var(--text);
-            font-family: 'Orbitron', sans-serif; font-size: 0.6em;
-            text-align: center; outline: none;
-        }
-
-        .chat-section {
-            background: var(--settings-bg); border: 1px solid var(--border);
-            border-radius: 15px; padding: 12px; margin-top: 12px;
-        }
-
-        .chat-messages {
-            height: 100px; overflow-y: auto; margin-bottom: 8px;
-            padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px;
-        }
-
-        .chat-message {
-            color: var(--text); font-size: 0.65em; margin-bottom: 4px;
-            padding: 4px 8px; background: rgba(255,255,255,0.05);
-            border-radius: 8px; word-break: break-word;
-        }
-
-        .chat-message.you { border-left: 3px solid #ff006e; }
-        .chat-message.opponent { border-left: 3px solid #3a86ff; }
-
-        .chat-input-row { display: flex; gap: 6px; }
-
+        .chat-msg.me { border-left: 3px solid var(--accent); }
+        .chat-msg.they { border-left: 3px solid var(--accent2); }
+        .chat-row { display: flex; gap: 6px; }
         .chat-input {
-            flex: 1; padding: 8px; background: var(--btn-bg);
-            border: 1px solid var(--border); border-radius: 8px;
-            color: var(--text); font-family: 'Orbitron', sans-serif;
-            font-size: 0.65em; outline: none;
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7em;
+            outline: none;
         }
-
         .chat-send {
-            padding: 8px 12px; background: linear-gradient(135deg, #ff006e, #3a86ff);
-            border: none; border-radius: 8px; color: white;
-            font-family: 'Orbitron', sans-serif; font-size: 0.7em;
-            font-weight: 700; cursor: pointer;
+            padding: 10px 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.75em;
         }
-
-        .reset-btn {
-            width: 100%; padding: 14px; background: var(--btn-bg);
-            border: 2px solid var(--btn-border); border-radius: 12px;
-            color: var(--btn-text); font-family: 'Orbitron', sans-serif;
-            font-size: 0.75em; font-weight: 700; cursor: pointer;
-            letter-spacing: 2px; text-transform: uppercase;
-            transition: all 0.3s; margin-top: 10px;
-        }
-
-        .reset-btn:hover { border-color: #ff006e; color: #ff006e; }
-
-        .footer {
-            text-align: center; margin-top: 12px;
-            color: var(--btn-text); font-size: 0.6em;
-            letter-spacing: 3px; opacity: 0.5;
-        }
-
+        
         .hidden { display: none !important; }
-
+        .footer {
+            text-align: center;
+            margin-top: 14px;
+            color: var(--text2);
+            font-size: 0.6em;
+            letter-spacing: 2px;
+        }
+        
         @media (max-width: 400px) {
-            .container { padding: 15px; }
-            .title { font-size: 1.6em; }
+            .container { padding: 20px 16px; }
             .cell { font-size: 1.8em; }
-            .btn { font-size: 0.65em; padding: 10px 6px; }
-            .mode-tab { font-size: 0.5em; }
+            .tab { font-size: 0.62em; padding: 8px 4px; }
         }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
-    <div class="bg-animation"></div>
-    <div class="confetti-container" id="confetti"></div>
-
+    <button class="theme-btn" onclick="toggleTheme()" id="tBtn">🌙</button>
+    
     <div class="container">
-        <div class="title">XO</div>
-        <div class="subtitle">ASSISTANT</div>
-
-        <div class="mode-tabs">
-            <button class="mode-tab active" id="tabCalc" onclick="switchMode('calc')">🧮 Ассистент</button>
-            <button class="mode-tab" id="tabAI" onclick="switchMode('ai')">🤖 ИИ</button>
-            <button class="mode-tab" id="tabFriend" onclick="switchMode('friend')">👥 Передача</button>
-            <button class="mode-tab" id="tabOnline" onclick="switchMode('online')">🌐 Онлайн</button>
+        <div class="logo"><span>X</span><span>O</span></div>
+        <div class="badge">Assistant</div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="sw('calc')">Ассистент</button>
+            <button class="tab" onclick="sw('ai')">ИИ</button>
+            <button class="tab" onclick="sw('friend')">Рядом</button>
+            <button class="tab" onclick="sw('online')">Онлайн</button>
         </div>
-
-        <div id="settingsSection">
-            <div class="settings-block" id="symbolBlock">
-                <div class="settings-label">🎮 Вы играете за</div>
-                <div class="button-row">
-                    <button class="btn" id="btnX" onclick="chooseSymbol('X')">✕ Крестик</button>
-                    <button class="btn" id="btnO" onclick="chooseSymbol('O')">○ Нолик</button>
+        
+        <div id="settings">
+            <div id="symBlock"><span class="label-sm">Вы играете за</span>
+                <div class="settings-row">
+                    <button class="btn" id="bX" onclick="chSym('X')">✕ Крестик</button>
+                    <button class="btn" id="bO" onclick="chSym('O')">○ Нолик</button>
                 </div>
             </div>
-            <div class="settings-block" id="firstMoveBlock">
-                <div class="settings-label">👑 Первый ход</div>
-                <div class="button-row">
-                    <button class="btn" id="btnMe" onclick="chooseFirst('me')">Я</button>
-                    <button class="btn" id="btnOpp" onclick="chooseFirst('opp')">Соперник</button>
+            <div id="firstBlock"><span class="label-sm">Первый ход</span>
+                <div class="settings-row">
+                    <button class="btn" id="bMe" onclick="chFirst('me')">Я</button>
+                    <button class="btn" id="bOp" onclick="chFirst('opp')">Соперник</button>
                 </div>
             </div>
         </div>
-
-        <div class="room-info hidden" id="roomInfo"></div>
-
-        <div class="turn-indicator hidden" id="turnIndicator">
-            <div class="turn-dot" id="dotYou">😎 Вы</div>
-            <div class="turn-dot" id="dotOpp">🎯 Соперник</div>
+        
+        <div class="room-box hidden" id="roomBox"></div>
+        
+        <div class="turn-bar hidden" id="turnBar">
+            <div class="turn-item active" id="tYou">Вы</div>
+            <div class="turn-item" id="tThem">Соперник</div>
         </div>
-
-        <div class="board" id="board">
-            <div class="cell" onclick="cellClick(0)"></div><div class="cell" onclick="cellClick(1)"></div><div class="cell" onclick="cellClick(2)"></div>
-            <div class="cell" onclick="cellClick(3)"></div><div class="cell" onclick="cellClick(4)"></div><div class="cell" onclick="cellClick(5)"></div>
-            <div class="cell" onclick="cellClick(6)"></div><div class="cell" onclick="cellClick(7)"></div><div class="cell" onclick="cellClick(8)"></div>
-        </div>
-
-        <div class="chat-section hidden" id="chatSection">
-            <div class="chat-messages" id="chatMessages"></div>
-            <div class="chat-input-row">
-                <input class="chat-input" id="chatInput" placeholder="Сообщение...">
-                <button class="chat-send" onclick="sendMessage()">→</button>
+        
+        <div class="board-wrap" id="bw">
+            <div class="board" id="board">
+                <div class="cell" onclick="clickCell(0)"></div><div class="cell" onclick="clickCell(1)"></div><div class="cell" onclick="clickCell(2)"></div>
+                <div class="cell" onclick="clickCell(3)"></div><div class="cell" onclick="clickCell(4)"></div><div class="cell" onclick="clickCell(5)"></div>
+                <div class="cell" onclick="clickCell(6)"></div><div class="cell" onclick="clickCell(7)"></div><div class="cell" onclick="clickCell(8)"></div>
             </div>
         </div>
-
-        <div class="status" id="status">Выберите режим</div>
-
-        <button class="reset-btn" onclick="resetGame()">🔄 Новая игра</button>
+        
+        <div class="chat-box hidden" id="chatBox">
+            <div class="chat-msgs" id="chatMsgs"></div>
+            <div class="chat-row">
+                <input class="chat-input" id="chatIn" placeholder="Сообщение...">
+                <button class="chat-send" onclick="sendChat()">→</button>
+            </div>
+        </div>
+        
+        <div class="status-msg" id="status">Выберите режим</div>
+        
+        <button class="btn-main" onclick="resetGame()">Новая игра</button>
         <div class="footer">made by sonki</div>
     </div>
-
+    
     <script>
-        function spawnConfetti() {
-            const c=document.getElementById('confetti');
-            const colors=['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4','#44cc44'];
-            for(let i=0;i<80;i++){setTimeout(()=>{const x=document.createElement('div');x.className='confetti';x.style.left=Math.random()*100+'%';x.style.background=colors[Math.floor(Math.random()*colors.length)];x.style.width=(Math.random()*12+6)+'px';x.style.height=(Math.random()*12+6)+'px';x.style.animationDuration=(Math.random()*2+2)+'s';c.appendChild(x);setTimeout(()=>x.remove(),3000)},i*10)}
-        }
-
-        let isDark=true;
-        function toggleTheme(){isDark=!isDark;document.body.className=isDark?'':'light-theme';document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';localStorage.setItem('theme',isDark?'dark':'light')}
-        if(localStorage.getItem('theme')==='light'){isDark=false;document.body.className='light-theme';document.getElementById('themeBtn').textContent='☀️'}
-
-        let playerSymbol=null,opponentSymbol=null,firstMove=null;
+        // Theme
+        let dark=true;
+        function toggleTheme(){dark=!dark;document.body.className=dark?'':'light-theme';document.getElementById('tBtn').textContent=dark?'🌙':'☀️';localStorage.setItem('xo-theme',dark?'dark':'light')}
+        if(localStorage.getItem('xo-theme')==='light'){dark=false;document.body.className='light-theme';document.getElementById('tBtn').textContent='☀️'}
+        
+        let pSym=null,oSym=null,first=null;
         let board=['','','','','','','','',''];
-        let gameActive=false,waitingForOpponent=false;
-        let currentMode='calc';
-
-        function switchMode(mode){
-            if(window._oc){window.supabase.removeChannel(window._oc);window._oc=null}
-            currentMode=mode;
-            ['tabCalc','tabAI','tabFriend','tabOnline'].forEach((id,i)=>{const m=['calc','ai','friend','online'];document.getElementById(id).className=m[i]===mode?'mode-tab active':'mode-tab'});
-            const sb=document.getElementById('symbolBlock'),fb=document.getElementById('firstMoveBlock'),ri=document.getElementById('roomInfo'),cs=document.getElementById('chatSection'),ti=document.getElementById('turnIndicator');
-            board=['','','','','','','','',''];gameActive=false;waitingForOpponent=false;updateBoard();clearHighlights();
-            if(mode==='ai'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.add('hidden');playerSymbol='X';opponentSymbol='O';gameActive=true;setStatus('🤖 Ваш ход! Вы ✕')}
-            else if(mode==='friend'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.remove('hidden');playerSymbol='X';opponentSymbol='O';gameActive=true;updateTurnIndicator('X');setStatus('👥 Ходит ✕')}
-            else if(mode==='online'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.remove('hidden');cs.classList.remove('hidden');ti.classList.remove('hidden');initOnlineMode()}
-            else{sb.classList.remove('hidden');fb.classList.remove('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.add('hidden');playerSymbol=null;opponentSymbol=null;firstMove=null;document.getElementById('btnX').className='btn';document.getElementById('btnO').className='btn';document.getElementById('btnMe').className='btn';document.getElementById('btnOpp').className='btn';setStatus('Выберите символ и кто первый')}
+        let active=false,waiting=false,mode='calc';
+        let _oc=null,_rid=null,_pid=null;
+        
+        function sw(m){
+            if(_oc){window.supabase.removeChannel(_oc);_oc=null}
+            mode=m;
+            document.querySelectorAll('.tab').forEach((t,i)=>t.className=['calc','ai','friend','online'][i]===m?'tab active':'tab');
+            const sb=document.getElementById('symBlock'),fb=document.getElementById('firstBlock'),rb=document.getElementById('roomBox'),tb=document.getElementById('turnBar'),cb=document.getElementById('chatBox');
+            board=['','','','','','','','',''];active=false;waiting=false;updateB();clearH();
+            if(m==='ai'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.add('hidden');tb.classList.add('hidden');cb.classList.add('hidden');pSym='X';oSym='O';active=true;setS('Ваш ход')}
+            else if(m==='friend'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.add('hidden');tb.classList.remove('hidden');cb.classList.add('hidden');pSym='X';oSym='O';active=true;upTurn('X');setS('Ходит ✕')}
+            else if(m==='online'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.remove('hidden');tb.classList.remove('hidden');cb.classList.remove('hidden');initOnline()}
+            else{sb.classList.remove('hidden');fb.classList.remove('hidden');rb.classList.add('hidden');tb.classList.add('hidden');cb.classList.add('hidden');pSym=null;oSym=null;first=null;document.getElementById('bX').className='btn';document.getElementById('bO').className='btn';document.getElementById('bMe').className='btn';document.getElementById('bOp').className='btn';setS('Выберите настройки')}
         }
-
-        function updateTurnIndicator(s){const dy=document.getElementById('dotYou'),dp=document.getElementById('dotOpp');dy.className='turn-dot';dp.className='turn-dot';if(s===playerSymbol||s===window._ops)dy.classList.add('active');else dp.classList.add('active')}
-
-        function cellClick(i){
-            if(!gameActive)return;if(board[i]!==''){setStatus('⚠️ Клетка занята!');return}
-            if(currentMode==='online'){if(waitingForOpponent)return;onlineCellClick(i);return}
-            if(currentMode==='ai'){board[i]=playerSymbol;updateBoard();if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🤖 ИИ думает...');setTimeout(()=>{const m=getAIMove();if(m!==null){board[m]=opponentSymbol;updateBoard();if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 ИИ выиграл');gameActive=false}else if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false}else setStatus('🤖 Ваш ход')}},400);return}
-            if(currentMode==='friend'){const mv=board.filter(c=>c!=='').length,s=mv%2===0?'X':'O';board[i]=s;updateBoard();if(checkWinner(s)){highlightWinCells(s);setStatus('🎉 '+s+' выиграл!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}const nx=mv%2===0?'○':'✕';updateTurnIndicator(nx==='✕'?'X':'O');setStatus('👥 Ходит '+nx);return}
-            if(currentMode==='calc'&&waitingForOpponent){board[i]=opponentSymbol;updateBoard();waitingForOpponent=false;clearHighlights();if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 Соперник выиграл');gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🧠 Просчитываю...');setTimeout(()=>makePlayerMove(),400)}
+        
+        function upTurn(s){
+            document.getElementById('tYou').className='turn-item';
+            document.getElementById('tThem').className='turn-item';
+            if(s===pSym||s===_pid) document.getElementById('tYou').classList.add('active');
+            else document.getElementById('tThem').classList.add('active');
         }
-
-        function makePlayerMove(){if(!gameActive)return;const m=getBestMove();if(m!==null){highlightCell(m);setStatus('💡 Ходите на подсвеченную клетку');setTimeout(()=>{board[m]=playerSymbol;updateBoard();clearHighlights();if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🎯 Нажмите клетку соперника');waitingForOpponent=true},800)}}
-
-        function getAIMove(){if(Math.random()<0.25){const e=[];for(let i=0;i<9;i++)if(board[i]==='')e.push(i);if(e.length)return e[Math.floor(Math.random()*e.length)]}return getBestMove()}
-
-        function getBestMove(){for(let i=0;i<9;i++){if(board[i]===''){board[i]=playerSymbol;if(checkWinner(playerSymbol)){board[i]='';return i}board[i]=''}}for(let i=0;i<9;i++){if(board[i]===''){board[i]=opponentSymbol;if(checkWinner(opponentSymbol)){board[i]='';return i}board[i]=''}}if(board[4]==='')return 4;for(let c of[0,2,6,8])if(board[c]==='')return c;for(let i=0;i<9;i++)if(board[i]==='')return i;return null}
-
-        function checkWinner(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return p.some(w=>w.every(i=>board[i]===s))}
-        function highlightWinCells(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(let w of p){if(w.every(i=>board[i]===s)){document.querySelectorAll('.cell').forEach((c,i)=>{if(w.includes(i))c.classList.add('win')});break}}}
-        function isBoardFull(){return board.every(c=>c!=='')}
-        function highlightCell(i){clearHighlights();document.querySelectorAll('.cell')[i].classList.add('suggestion')}
-        function clearHighlights(){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('suggestion','win'))}
-        function updateBoard(){document.querySelectorAll('.cell').forEach((c,i)=>{c.textContent=board[i];c.className='cell';if(board[i]==='X')c.classList.add('x');if(board[i]==='O')c.classList.add('o')})}
-        function setStatus(m){document.getElementById('status').textContent=m}
-
-        function chooseSymbol(s){if(currentMode!=='calc')return;if(gameActive)return;playerSymbol=s;opponentSymbol=s==='X'?'O':'X';document.getElementById('btnX').className=s==='X'?'btn active-x':'btn';document.getElementById('btnO').className=s==='O'?'btn active-o':'btn';if(firstMove)startCalcGame()}
-        function chooseFirst(w){if(currentMode!=='calc')return;if(gameActive)return;firstMove=w;document.getElementById('btnMe').className=w==='me'?'btn active-first':'btn';document.getElementById('btnOpp').className=w==='opp'?'btn active-first':'btn';if(playerSymbol)startCalcGame()}
-        function startCalcGame(){gameActive=true;board=['','','','','','','','',''];waitingForOpponent=false;updateBoard();clearHighlights();if(firstMove==='opp'){setStatus('🎯 Нажмите клетку соперника');waitingForOpponent=true}else{setStatus('🤔 Анализирую...');setTimeout(()=>makePlayerMove(),500)}}
-
+        
+        function clickCell(i){
+            if(!active||board[i]!=='') return;
+            if(mode==='online'){if(waiting)return;onlineClick(i);return}
+            if(mode==='ai'){board[i]=pSym;updateB();if(win(pSym)){hw(pSym);setS('Победа!');active=false;return}if(full()){setS('Ничья');active=false;return}setS('ИИ думает...');setTimeout(()=>{const m=aiMove();if(m!==null){board[m]=oSym;updateB();if(win(oSym)){hw(oSym);setS('ИИ выиграл');active=false}else if(full()){setS('Ничья');active=false}else setS('Ваш ход')}},350);return}
+            if(mode==='friend'){const mv=board.filter(c=>c!=='').length,s=mv%2===0?'X':'O';board[i]=s;updateB();if(win(s)){hw(s);setS(s+' выиграл!');active=false;return}if(full()){setS('Ничья');active=false;return}const nx=mv%2===0?'○':'✕';upTurn(nx==='✕'?'X':'O');setS('Ходит '+nx);return}
+            if(mode==='calc'&&waiting){board[i]=oSym;updateB();waiting=false;clearH();if(win(oSym)){hw(oSym);setS('Соперник выиграл');active=false;return}if(full()){setS('Ничья');active=false;return}setS('Просчитываю...');setTimeout(()=>makeHint(),400)}
+        }
+        
+        function makeHint(){if(!active)return;const m=bestMove();if(m!==null){hintCell(m);setS('Ваш ход → клетка '+(m+1));setTimeout(()=>{board[m]=pSym;updateB();clearH();if(win(pSym)){hw(pSym);setS('Победа!');active=false;return}if(full()){setS('Ничья');active=false;return}setS('Ход соперника');waiting=true},700)}}
+        
+        function aiMove(){if(Math.random()<0.2){const e=[];for(let i=0;i<9;i++)if(board[i]==='')e.push(i);if(e.length)return e[Math.floor(Math.random()*e.length)]}return bestMove()}
+        
+        function bestMove(){
+            for(let i=0;i<9;i++){if(board[i]===''){board[i]=pSym;if(win(pSym)){board[i]='';return i}board[i]=''}}
+            for(let i=0;i<9;i++){if(board[i]===''){board[i]=oSym;if(win(oSym)){board[i]='';return i}board[i]=''}}
+            if(board[4]==='')return 4;
+            for(let c of[0,2,6,8])if(board[c]==='')return c;
+            for(let i=0;i<9;i++)if(board[i]==='')return i;
+            return null;
+        }
+        
+        function win(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return p.some(w=>w.every(i=>board[i]===s))}
+        function hw(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(let w of p){if(w.every(i=>board[i]===s)){document.querySelectorAll('.cell').forEach((c,i)=>{if(w.includes(i))c.classList.add('win-cell')});break}}}
+        function full(){return board.every(c=>c!=='')}
+        function hintCell(i){clearH();document.querySelectorAll('.cell')[i].classList.add('hint')}
+        function clearH(){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('hint','win-cell'))}
+        function updateB(){document.querySelectorAll('.cell').forEach((c,i)=>{c.textContent=board[i];c.className='cell';if(board[i]==='X')c.classList.add('X');if(board[i]==='O')c.classList.add('O')})}
+        function setS(m){document.getElementById('status').textContent=m}
+        
+        function chSym(s){if(mode!=='calc'||active)return;pSym=s;oSym=s==='X'?'O':'X';document.getElementById('bX').className=s==='X'?'btn sel-x':'btn';document.getElementById('bO').className=s==='O'?'btn sel-o':'btn';if(first)startCalc()}
+        function chFirst(w){if(mode!=='calc'||active)return;first=w;document.getElementById('bMe').className=w==='me'?'btn sel-first':'btn';document.getElementById('bOp').className=w==='opp'?'btn sel-first':'btn';if(pSym)startCalc()}
+        function startCalc(){active=true;board=['','','','','','','','',''];waiting=false;updateB();clearH();if(first==='opp'){setS('Ход соперника');waiting=true}else{setS('Просчитываю...');setTimeout(()=>makeHint(),500)}}
+        
         function resetGame(){
-            board=['','','','','','','','',''];updateBoard();clearHighlights();
-            if(currentMode==='online'){
-                gameActive=true;
-                waitingForOpponent=window._ops==='O';
-                updateTurnIndicator(waitingForOpponent?'O':window._ops);
-                setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход');
-                if(!waitingForOpponent) broadcastMove(null);
-            }else if(currentMode==='ai'){gameActive=true;playerSymbol='X';opponentSymbol='O';setStatus('🤖 Ваш ход! Вы ✕')}
-            else if(currentMode==='friend'){gameActive=true;updateTurnIndicator('X');setStatus('👥 Ходит ✕')}
-            else if(currentMode==='calc'){gameActive=false;waitingForOpponent=false;if(playerSymbol&&firstMove)startCalcGame();else setStatus('Выберите символ и кто первый')}
+            board=['','','','','','','','',''];updateB();clearH();
+            if(mode==='online'){
+                active=true;waiting=_pid==='O';
+                upTurn(waiting?'O':_pid);
+                setS(waiting?'Ход соперника':'Ваш ход');
+                if(!waiting) broadcast(null);
+            }else if(mode==='ai'){active=true;pSym='X';oSym='O';setS('Ваш ход')}
+            else if(mode==='friend'){active=true;upTurn('X');setS('Ходит ✕')}
+            else{active=false;waiting=false;if(pSym&&first)startCalc();else setS('Выберите настройки')}
         }
-
-        // Онлайн
-        function initOnlineMode(){
-            if(!window.supabase){document.getElementById('roomInfo').innerHTML='⏳ Загрузка...';loadSupabase();return}
-            setupOnline()
+        
+        // Online
+        function initOnline(){
+            if(!window.supabase){document.getElementById('roomBox').innerHTML='<div class="room-box">Загрузка...</div>';loadSB();return}
+            setupOL();
         }
-        function loadSupabase(){
-            const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            s.onload=()=>{window.supabase=supabase.createClient('https://mvnmqtvdazrrcrufaely.supabase.co','sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7');setupOnline()};
-            s.onerror=()=>{document.getElementById('roomInfo').innerHTML='❌ Ошибка'};document.head.appendChild(s)
+        function loadSB(){
+            const s=document.createElement('script');
+            s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            s.onload=()=>{window.supabase=supabase.createClient('https://mvnmqtvdazrrcrufaely.supabase.co','sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7');setupOL()};
+            s.onerror=()=>{document.getElementById('roomBox').innerHTML='<div class="room-box">Ошибка загрузки</div>'};
+            document.head.appendChild(s);
         }
-        function setupOnline(){
+        function setupOL(){
             const p=new URLSearchParams(window.location.search),j=p.get('room');
-            if(j){window._orid=j;window._ops='O';document.getElementById('dotYou').textContent='😎 Вы (○)';document.getElementById('dotOpp').textContent='🎯 Игрок 1 (✕)';joinOnlineRoom()}
-            else{window._orid=Math.random().toString(36).substr(2,6);window._ops='X';document.getElementById('dotYou').textContent='😎 Вы (✕)';document.getElementById('dotOpp').textContent='🎯 Игрок 2 (○)';createOnlineRoom()}
+            if(j){_rid=j;_pid='O';document.getElementById('tYou').textContent='Вы (○)';document.getElementById('tThem').textContent='Игрок 1 (✕)';joinRoom();}
+            else{_rid=Math.random().toString(36).substr(2,6);_pid='X';document.getElementById('tYou').textContent='Вы (✕)';document.getElementById('tThem').textContent='Игрок 2 (○)';createRoom();}
         }
-        async function createOnlineRoom(){
-            const l=window.location.origin+window.location.pathname+'?room='+window._orid;
-            document.getElementById('roomInfo').innerHTML=`Код: <b>${window._orid}</b><br><input class="join-input" value="${l}" readonly onclick="this.select()"><button class="copy-btn" onclick="copyOnlineLink()">📋 Копировать</button>`;
-            try{await window.supabase.from('games').upsert({id:window._orid,board:'["","","","","","","","",""]',turn:'X',chat:'[]',status:'waiting'})}catch(e){}
-            subscribeToRoom();gameActive=true;updateTurnIndicator('X');setStatus('🌐 Ожидание соперника...')
+        async function createRoom(){
+            const l=window.location.origin+window.location.pathname+'?room='+_rid;
+            document.getElementById('roomBox').innerHTML=`<div class="room-box">Код комнаты<div class="code">${_rid}</div><input value="${l}" readonly onclick="this.select()"><button class="btn-copy" onclick="copyLink()">Копировать ссылку</button></div>`;
+            try{await window.supabase.from('games').upsert({id:_rid,board:'["","","","","","","","",""]',turn:'X',chat:'[]',status:'waiting'})}catch(e){}
+            subRoom();active=true;upTurn('X');setS('Ожидание соперника...');
         }
-        async function joinOnlineRoom(){
-            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${window._orid}</b>...`;
-            try{const {data}=await window.supabase.from('games').select('*').eq('id',window._orid).single();
-            if(data){await window.supabase.from('games').update({status:'playing'}).eq('id',window._orid);document.getElementById('roomInfo').innerHTML=`Комната: <b>${window._orid}</b> | Вы: <b>O</b>`;subscribeToRoom();gameActive=true;waitingForOpponent=true;updateTurnIndicator('X');setStatus('🎯 Ход соперника (✕)')}else document.getElementById('roomInfo').innerHTML='❌ Комната не найдена'}catch(e){document.getElementById('roomInfo').innerHTML='❌ Ошибка'}
+        async function joinRoom(){
+            try{
+                const {data}=await window.supabase.from('games').select('*').eq('id',_rid).single();
+                if(data){
+                    await window.supabase.from('games').update({status:'playing'}).eq('id',_rid);
+                    document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';
+                    setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden')},2000);
+                    subRoom();active=true;waiting=true;upTurn('X');setS('Ход соперника (✕)');
+                }else document.getElementById('roomBox').innerHTML='<div class="room-box">Комната не найдена</div>';
+            }catch(e){document.getElementById('roomBox').innerHTML='<div class="room-box">Ошибка</div>';}
         }
-        function subscribeToRoom(){
-            window._oc=window.supabase.channel('room_'+window._orid)
-            .on('broadcast',{event:'move'},(payload)=>{const d=payload.payload;board=d.board;updateBoard();clearHighlights();
-                if(d.winner){highlightWinCells(d.winner);setStatus(d.winner===window._ops?'🎉 Вы выиграли!':'😞 Соперник выиграл');spawnConfetti();gameActive=false}
-                else if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false}
-                else{waitingForOpponent=d.turn!==window._ops;updateTurnIndicator(d.turn);setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход')}})
-            .on('broadcast',{event:'chat'},(payload)=>{const m=payload.payload,c=document.getElementById('chatMessages'),cl=m.player===window._ops?'chat-message you':'chat-message opponent';c.innerHTML+=`<div class="${cl}"><b>${m.player===window._ops?'Вы':(window._ops==='X'?'Игрок 2':'Игрок 1')}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight})
-            .subscribe()
+        function subRoom(){
+            if(_oc) window.supabase.removeChannel(_oc);
+            _oc=window.supabase.channel('room_'+_rid)
+            .on('broadcast',{event:'move'},(p)=>{const d=p.payload;board=d.board;updateB();clearH();if(d.winner){hw(d.winner);setS(d.winner===_pid?'Вы победили!':'Соперник победил');active=false}else if(full()){setS('Ничья');active=false}else{waiting=d.turn!==_pid;upTurn(d.turn);setS(waiting?'Ход соперника':'Ваш ход')}})
+            .on('broadcast',{event:'chat'},(p)=>{const m=p.payload,c=document.getElementById('chatMsgs'),cl=m.player===_pid?'chat-msg me':'chat-msg they';c.innerHTML+=`<div class="${cl}"><b>${m.player===_pid?'Вы':(_pid==='X'?'Игрок 2':'Игрок 1')}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight})
+            .subscribe();
         }
-        function copyOnlineLink(){const i=document.querySelector('.join-input');if(i){i.select();navigator.clipboard.writeText(i.value);setStatus('✅ Ссылка скопирована!')}}
-        async function sendMessage(){const i=document.getElementById('chatInput'),t=i.value.trim();if(!t||!window._oc)return;await window._oc.send({type:'broadcast',event:'chat',payload:{player:window._ops,text:t}});const c=document.getElementById('chatMessages');c.innerHTML+=`<div class="chat-message you"><b>Вы:</b> ${t}</div>`;c.scrollTop=c.scrollHeight;i.value=''}
-        async function broadcastMove(w){if(!window._oc)return;await window._oc.send({type:'broadcast',event:'move',payload:{board:board,turn:window._ops==='X'?'O':'X',winner:w||null}})}
-        function onlineCellClick(i){board[i]=window._ops;updateBoard();if(checkWinner(window._ops)){highlightWinCells(window._ops);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;broadcastMove(window._ops);return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;broadcastMove(null);return}waitingForOpponent=true;updateTurnIndicator(window._ops==='X'?'O':'X');setStatus('🎯 Ход соперника');broadcastMove(null)}
-
-        updateBoard();if(currentMode==='calc')setStatus('Выберите символ и кто первый');
+        function copyLink(){const i=document.querySelector('.room-box input');if(i){i.select();navigator.clipboard.writeText(i.value);setS('Ссылка скопирована!')}}
+        async function sendChat(){const i=document.getElementById('chatIn'),t=i.value.trim();if(!t||!_oc)return;await _oc.send({type:'broadcast',event:'chat',payload:{player:_pid,text:t}});const c=document.getElementById('chatMsgs');c.innerHTML+=`<div class="chat-msg me"><b>Вы:</b> ${t}</div>`;c.scrollTop=c.scrollHeight;i.value=''}
+        async function broadcast(w){if(!_oc)return;await _oc.send({type:'broadcast',event:'move',payload:{board:board,turn:_pid==='X'?'O':'X',winner:w||null}})}
+        function onlineClick(i){board[i]=_pid;updateB();if(win(_pid)){hw(_pid);setS('Вы победили!');active=false;broadcast(_pid);return}if(full()){setS('Ничья');active=false;broadcast(null);return}waiting=true;upTurn(_pid==='X'?'O':'X');setS('Ход соперника');broadcast(null)}
+        
+        updateB();setS('Выберите режим');
     </script>
 </body>
 </html>
