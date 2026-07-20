@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XO Assistant - by Sonki</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Анимированный градиентный фон */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, #ff006e 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, #3a86ff 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, #8338ec 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, #ffbe0b 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 20%, #fb5607 0%, transparent 50%);
+            animation: bgShift 15s ease-in-out infinite alternate;
+            opacity: 0.6;
+        }
+
+        @keyframes bgShift {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.5) rotate(5deg);
+            }
+            100% {
+                transform: scale(1.2) rotate(-5deg);
+            }
+        }
+
+        /* Сетка */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 10s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Частицы */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.5) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Неоновые кольца */
+        .neon-rings {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+
+        .ring:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            margin-left: -300px;
+            margin-top: -300px;
+            border-color: rgba(255, 0, 110, 0.3);
+            animation-delay: 0s;
+        }
+
+        .ring:nth-child(2) {
+            width: 700px;
+            height: 700px;
+            margin-left: -350px;
+            margin-top: -350px;
+            border-color: rgba(58, 134, 255, 0.3);
+            animation-delay: 1s;
+        }
+
+        .ring:nth-child(3) {
+            width: 800px;
+            height: 800px;
+            margin-left: -400px;
+            margin-top: -400px;
+            border-color: rgba(131, 56, 236, 0.3);
+            animation-delay: 2s;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* Основной контейнер */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 10, 20, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 40px;
+            width: 480px;
+            box-shadow: 
+                0 0 50px rgba(255, 0, 110, 0.3),
+                0 0 100px rgba(58, 134, 255, 0.2),
+                0 0 150px rgba(131, 56, 236, 0.2),
+                inset 0 0 50px rgba(255, 255, 255, 0.05);
+            animation: containerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes containerGlow {
+            0% {
+                box-shadow: 
+                    0 0 50px rgba(255, 0, 110, 0.3),
+                    0 0 100px rgba(58, 134, 255, 0.2);
+            }
+            100% {
+                box-shadow: 
+                    0 0 80px rgba(131, 56, 236, 0.4),
+                    0 0 150px rgba(255, 190, 11, 0.3);
+            }
+        }
+
+        /* Заголовок */
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff006e, #3a86ff, #8338ec, #ffbe0b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: none;
+            letter-spacing: 5px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8em;
+            margin-top: -20px;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        /* Блоки настроек */
+        .settings-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .settings-block:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Кнопки */
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn.active-x {
+            background: linear-gradient(135deg, #ff006e, #ff4d6d);
+            border-color: #ff006e;
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.5);
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+
+        .btn.active-o {
+            background: linear-gradient(135deg, #3a86ff, #4d9fff);
+            border-color: #3a86ff;
+            color: white;
+            box-shadow: 0 0 30px rgba(58, 134, 255, 0.5);
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+
+        .btn.active-first {
+            background: linear-gradient(135deg, #8338ec, #9d5cff);
+            border-color: #8338ec;
+            color: white;
+            box-shadow: 0 0 30px rgba(131, 56, 236, 0.5);
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes btnGlow {
+            0%, 100% { box-shadow: 0 0 20px currentColor; }
+            50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
+        }
+
+        /* Игровое поле */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .board::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 22px;
+            background: linear-gradient(45deg, #ff006e, #3a86ff, #8338ec, #ffbe0b);
+            z-index: -1;
+            animation: borderRotate 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: rgba(20, 20, 30, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cell:hover::after {
+            opacity: 1;
+        }
+
+        .cell:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .cell.x {
+            color: #ff006e;
+            text-shadow: 0 0 20px rgba(255, 0, 110, 0.8), 0 0 40px rgba(255, 0, 110, 0.4);
+            animation: popX 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cell.o {
+            color: #3a86ff;
+            text-shadow: 0 0 20px rgba(58, 134, 255, 0.8), 0 0 40px rgba(58, 134, 255, 0.4);
+            animation: popO 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes popX {
+            0% { transform: scale(1.5) rotate(90deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes popO {
+            0% { transform: scale(1.5); opacity: 0; border-radius: 50%; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .cell.suggestion {
+            animation: suggestGlow 1s ease-in-out infinite;
+            border-color: #ffbe0b !important;
+            background: rgba(255, 190, 11, 0.15) !important;
+        }
+
+        @keyframes suggestGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 190, 11, 0.5);
+                border-color: rgba(255, 190, 11, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 190, 11, 0.8), 0 0 80px rgba(255, 190, 11, 0.4);
+                border-color: rgba(255, 190, 11, 1);
+            }
+        }
+
+        .cell.win {
+            animation: winCelebrate 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes winCelebrate {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                transform: scale(1.1);
+                box-shadow: 0 0 60px rgba(255, 255, 255, 0.8), 0 0 100px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        /* Статус */
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: statusPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+            50% { border-color: rgba(255, 255, 255, 0.3); }
+        }
+
+        /* Кнопка сброса */
+        .reset-btn {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 0, 110, 0.2);
+            border-color: #ff006e;
+            color: #ff006e;
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7em;
+            letter-spacing: 3px;
+            font-weight: 400;
+        }
+
+        /* Иконки в кнопках */
+        .btn-icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    <div class="neon-rings">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+    </div>
+    <div class="particles-container" id="particles"></div>
+
+    <div class="container">
+        <div class="title">XO</div>
+        <div class="subtitle">ASSISTANT</div>
+
+        <div class="settings-block">
+            <div class="settings-label">🎮 Вы играете за</div>
+            <div class="button-row">
+                <button class="btn" id="btnX" onclick="chooseSymbol('X')">
+                    <span class="btn-icon">✕</span> Крестик
+                </button>
+                <button class="btn" id="btnO" onclick="chooseSymbol('O')">
+                    <span class="btn-icon">○</span> Нолик
+                </button>
+            </div>
+        </div>
+
+        <div class="settings-block">
+            <div class="settings-label">👑 Первый ход</div>
+            <div class="button-row">
+                <button class="btn" id="btnMe" onclick="chooseFirst('me')">Я</button>
+                <button class="btn" id="btnOpp" onclick="chooseFirst('opp')">Соперник</button>
+            </div>
+        </div>
+
+        <div class="board" id="board">
+            <div class="cell" onclick="cellClick(0)"></div>
+            <div class="cell" onclick="cellClick(1)"></div>
+            <div class="cell" onclick="cellClick(2)"></div>
+            <div class="cell" onclick="cellClick(3)"></div>
+            <div class="cell" onclick="cellClick(4)"></div>
+            <div class="cell" onclick="cellClick(5)"></div>
+            <div class="cell" onclick="cellClick(6)"></div>
+            <div class="cell" onclick="cellClick(7)"></div>
+            <div class="cell" onclick="cellClick(8)"></div>
+        </div>
+
+        <div class="status" id="status">Выберите настройки для начала игры</div>
+
+        <button class="reset-btn" onclick="resetGame()">🔄 Новая игра</button>
+        
+        <div class="footer">made by sonki</div>
+    </div>
+
+    <script>
+        // Создание частиц
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#ff006e', '#3a86ff', '#8338ec', '#ffbe0b', '#fb5607', '#00f5d4'];
+            
+            for (let i = 0; i < 60; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 4 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                particle.style.animationDelay = (Math.random() * 8) + 's';
+                particle.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px ${particle.style.background}`;
+                container.appendChild(particle);
+            }
+        }
+
+        let playerSymbol = null;
+        let opponentSymbol = null;
+        let firstMove = null;
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = false;
+        let waitingForOpponent = false;
+
+        function chooseSymbol(symbol) {
+            if (gameActive) return;
+            
+            playerSymbol = symbol;
+            opponentSymbol = symbol === 'X' ? 'O' : 'X';
+            
+            document.getElementById('btnX').className = symbol === 'X' ? 'btn active-x' : 'btn';
+            document.getElementById('btnO').className = symbol === 'O' ? 'btn active-o' : 'btn';
+            
+            checkReady();
+        }
+
+        function chooseFirst(who) {
+            if (gameActive) return;
+            
+            firstMove = who;
+            
+            document.getElementById('btnMe').className = who === 'me' ? 'btn active-first' : 'btn';
+            document.getElementById('btnOpp').className = who === 'opp' ? 'btn active-first' : 'btn';
+            
+            checkReady();
+        }
+
+        function checkReady() {
+            if (playerSymbol && firstMove) {
+                startGame();
+            }
+        }
+
+        function startGame() {
+            gameActive = true;
+            board = ['', '', '', '', '', '', '', '', ''];
+            waitingForOpponent = false;
+            
+            updateBoard();
+            clearHighlights();
+            
+            if (firstMove === 'opp') {
+                setStatus('🎯 Нажмите на клетку, куда пошёл соперник');
+                waitingForOpponent = true;
+            } else {
+                setStatus('🤔 Анализирую позицию...');
+                setTimeout(() => makePlayerMove(), 600);
+            }
+        }
+
+        function cellClick(index) {
+            if (!gameActive) return;
+
+            if (waitingForOpponent) {
+                if (board[index] !== '') {
+                    setStatus('⚠️ Клетка занята! Выберите другую');
+                    return;
+                }
+                
+                board[index] = opponentSymbol;
+                updateBoard();
+                waitingForOpponent = false;
+                clearHighlights();
+                
+                if (checkWinner(opponentSymbol)) {
+                    highlightWinCells(opponentSymbol);
+                    setStatus('😞 Соперник выиграл');
+                    gameActive = false;
+                    return;
+                }
+                
+                if (isBoardFull()) {
+                    setStatus('🤝 Ничья!');
+                    gameActive = false;
+                    return;
+                }
+                
+                setStatus('🧠 Просчитываю оптимальный ход...');
+                setTimeout(() => makePlayerMove(), 500);
+            }
+        }
+
+        function makePlayerMove() {
+            if (!gameActive) return;
+            
+            const move = getBestMove();
+            if (move !== null && move !== undefined) {
+                highlightCell(move);
+                setStatus(`💡 Ходите на подсвеченную клетку`);
+                
+                setTimeout(() => {
+                    board[move] = playerSymbol;
+                    updateBoard();
+                    clearHighlights();
+                    
+                    if (checkWinner(playerSymbol)) {
+                        highlightWinCells(playerSymbol);
+                        setStatus('🎉 Поздравляем! Вы выиграли!');
+                        gameActive = false;
+                        return;
+                    }
+                    
+                    if (isBoardFull()) {
+                        setStatus('🤝 Ничья!');
+                        gameActive = false;
+                        return;
+                    }
+                    
+                    setStatus('🎯 Нажмите на клетку, куда пошёл соперник');
+                    waitingForOpponent = true;
+                }, 1000);
+            }
+        }
+
+        function getBestMove() {
+            let bestScore = -Infinity;
+            let bestMove = null;
+
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = playerSymbol;
+                    let score = minimax(board, 0, false);
+                    board[i] = '';
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                }
+            }
+            
+            return bestMove;
+        }
+
+        function minimax(board, depth, isMaximizing) {
+            if (checkWinner(playerSymbol)) return 10 - depth;
+            if (checkWinner(opponentSymbol)) return depth - 10;
+            if (isBoardFull()) return 0;
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = playerSymbol;
+                        let score = minimax(board, depth + 1, false);
+                        board[i] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = opponentSymbol;
+                        let score = minimax(board, depth + 1, true);
+                        board[i] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function checkWinner(symbol) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            return winPatterns.some(pattern => 
+                pattern.every(index => board[index] === symbol)
+            );
+        }
+
+        function highlightWinCells(symbol) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (let pattern of winPatterns) {
+                if (pattern.every(index => board[index] === symbol)) {
+                    const cells = document.querySelectorAll('.cell');
+                    pattern.forEach(index => {
+                        cells[index].classList.add('win');
+                    });
+                    break;
+                }
+            }
+        }
+
+        function isBoardFull() {
+            return board.every(cell => cell !== '');
+        }
+
+        function highlightCell(index) {
+            clearHighlights();
+            const cells = document.querySelectorAll('.cell');
+            cells[index].classList.add('suggestion');
+        }
+
+        function clearHighlights() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => cell.classList.remove('suggestion', 'win'));
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                cell.textContent = board[index];
+                cell.className = 'cell';
+                if (board[index] === 'X') cell.classList.add('x');
+                if (board[index] === 'O') cell.classList.add('o');
+            });
+        }
+
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function resetGame() {
+            playerSymbol = null;
+            opponentSymbol = null;
+            firstMove = null;
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = false;
+            waitingForOpponent = false;
+            
+            document.getElementById('btnX').className = 'btn';
+            document.getElementById('btnO').className = 'btn';
+            document.getElementById('btnMe').className = 'btn';
+            document.getElementById('btnOpp').className = 'btn';
+            
+            updateBoard();
+            clearHighlights();
+            setStatus('Выберите настройки для начала игры');
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
