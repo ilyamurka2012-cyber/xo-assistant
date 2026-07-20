@@ -18,7 +18,6 @@
             --btn-bg: rgba(255, 255, 255, 0.05);
             --btn-border: rgba(255, 255, 255, 0.2);
             --btn-text: rgba(255, 255, 255, 0.7);
-            --win-color: #44cc44;
         }
 
         .light-theme {
@@ -242,7 +241,7 @@
         }
 
         .turn-indicator {
-            display: flex; justify-content: center; gap: 20px;
+            display: flex; justify-content: center; gap: 15px;
             margin: 10px 0; font-size: 0.7em;
         }
 
@@ -314,19 +313,6 @@
             font-weight: 700; cursor: pointer;
         }
 
-        .scoreboard {
-            display: flex; justify-content: center; gap: 15px;
-            margin: 10px 0; font-size: 0.7em;
-        }
-
-        .score {
-            text-align: center; padding: 8px 12px;
-            background: var(--settings-bg); border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .score span { font-size: 1.5em; font-weight: 900; }
-
         .reset-btn {
             width: 100%; padding: 14px; background: var(--btn-bg);
             border: 2px solid var(--btn-border); border-radius: 12px;
@@ -379,7 +365,6 @@
                     <button class="btn" id="btnO" onclick="chooseSymbol('O')">○ Нолик</button>
                 </div>
             </div>
-
             <div class="settings-block" id="firstMoveBlock">
                 <div class="settings-label">👑 Первый ход</div>
                 <div class="button-row">
@@ -392,32 +377,20 @@
         <div class="room-info hidden" id="roomInfo"></div>
 
         <div class="turn-indicator hidden" id="turnIndicator">
-            <div class="turn-dot" id="dotYou">😎 Вы (✕)</div>
-            <div class="turn-dot" id="dotOpp">🎯 Игрок 2 (○)</div>
-        </div>
-
-        <div class="scoreboard hidden" id="scoreboard">
-            <div class="score">😎 Вы<br><span id="scoreYou">0</span></div>
-            <div class="score">🤝 Ничьи<br><span id="scoreDraw">0</span></div>
-            <div class="score">🎯 Игрок 2<br><span id="scoreOpp">0</span></div>
+            <div class="turn-dot" id="dotYou">😎 Вы</div>
+            <div class="turn-dot" id="dotOpp">🎯 Соперник</div>
         </div>
 
         <div class="board" id="board">
-            <div class="cell" onclick="cellClick(0)"></div>
-            <div class="cell" onclick="cellClick(1)"></div>
-            <div class="cell" onclick="cellClick(2)"></div>
-            <div class="cell" onclick="cellClick(3)"></div>
-            <div class="cell" onclick="cellClick(4)"></div>
-            <div class="cell" onclick="cellClick(5)"></div>
-            <div class="cell" onclick="cellClick(6)"></div>
-            <div class="cell" onclick="cellClick(7)"></div>
-            <div class="cell" onclick="cellClick(8)"></div>
+            <div class="cell" onclick="cellClick(0)"></div><div class="cell" onclick="cellClick(1)"></div><div class="cell" onclick="cellClick(2)"></div>
+            <div class="cell" onclick="cellClick(3)"></div><div class="cell" onclick="cellClick(4)"></div><div class="cell" onclick="cellClick(5)"></div>
+            <div class="cell" onclick="cellClick(6)"></div><div class="cell" onclick="cellClick(7)"></div><div class="cell" onclick="cellClick(8)"></div>
         </div>
 
         <div class="chat-section hidden" id="chatSection">
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-row">
-                <input class="chat-input" id="chatInput" placeholder="Сообщение..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <input class="chat-input" id="chatInput" placeholder="Сообщение...">
                 <button class="chat-send" onclick="sendMessage()">→</button>
             </div>
         </div>
@@ -425,543 +398,119 @@
         <div class="status" id="status">Выберите режим</div>
 
         <button class="reset-btn" onclick="resetGame()">🔄 Новая игра</button>
-        
         <div class="footer">made by sonki</div>
     </div>
 
     <script>
         function spawnConfetti() {
-            const container = document.getElementById('confetti');
-            const colors = ['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4','#44cc44'];
-            for(let i=0;i<80;i++){
-                setTimeout(()=>{
-                    const c=document.createElement('div');
-                    c.className='confetti';
-                    c.style.left=Math.random()*100+'%';
-                    c.style.background=colors[Math.floor(Math.random()*colors.length)];
-                    c.style.width=(Math.random()*12+6)+'px';
-                    c.style.height=(Math.random()*12+6)+'px';
-                    c.style.animationDuration=(Math.random()*2+2)+'s';
-                    container.appendChild(c);
-                    setTimeout(()=>c.remove(),3000);
-                },i*10);
-            }
+            const c=document.getElementById('confetti');
+            const colors=['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4','#44cc44'];
+            for(let i=0;i<80;i++){setTimeout(()=>{const x=document.createElement('div');x.className='confetti';x.style.left=Math.random()*100+'%';x.style.background=colors[Math.floor(Math.random()*colors.length)];x.style.width=(Math.random()*12+6)+'px';x.style.height=(Math.random()*12+6)+'px';x.style.animationDuration=(Math.random()*2+2)+'s';c.appendChild(x);setTimeout(()=>x.remove(),3000)},i*10)}
         }
 
         let isDark=true;
-        function toggleTheme(){
-            isDark=!isDark;
-            document.body.className=isDark?'':'light-theme';
-            document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';
-            localStorage.setItem('theme',isDark?'dark':'light');
-        }
-        if(localStorage.getItem('theme')==='light'){
-            isDark=false;
-            document.body.className='light-theme';
-            document.getElementById('themeBtn').textContent='☀️';
-        }
+        function toggleTheme(){isDark=!isDark;document.body.className=isDark?'':'light-theme';document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';localStorage.setItem('theme',isDark?'dark':'light')}
+        if(localStorage.getItem('theme')==='light'){isDark=false;document.body.className='light-theme';document.getElementById('themeBtn').textContent='☀️'}
 
         let playerSymbol=null,opponentSymbol=null,firstMove=null;
         let board=['','','','','','','','',''];
         let gameActive=false,waitingForOpponent=false;
         let currentMode='calc';
-        let scores={you:0,opp:0,draw:0};
 
         function switchMode(mode){
-            if(window._onlineChannel){
-                window.supabase.removeChannel(window._onlineChannel);
-                window._onlineChannel=null;
-            }
-            
+            if(window._oc){window.supabase.removeChannel(window._oc);window._oc=null}
             currentMode=mode;
-            ['tabCalc','tabAI','tabFriend','tabOnline'].forEach((id,i)=>{
-                const modes=['calc','ai','friend','online'];
-                document.getElementById(id).className=modes[i]===mode?'mode-tab active':'mode-tab';
-            });
-            
-            const symbolBlock=document.getElementById('symbolBlock');
-            const firstMoveBlock=document.getElementById('firstMoveBlock');
-            const roomInfo=document.getElementById('roomInfo');
-            const chatSection=document.getElementById('chatSection');
-            const turnIndicator=document.getElementById('turnIndicator');
-            const scoreboard=document.getElementById('scoreboard');
-            
-            board=['','','','','','','','',''];
-            gameActive=false;
-            waitingForOpponent=false;
-            updateBoard();
-            clearHighlights();
-            
-            if(mode==='ai'){
-                symbolBlock.classList.add('hidden');
-                firstMoveBlock.classList.add('hidden');
-                roomInfo.classList.add('hidden');
-                chatSection.classList.add('hidden');
-                turnIndicator.classList.add('hidden');
-                scoreboard.classList.add('hidden');
-                playerSymbol='X';opponentSymbol='O';
-                gameActive=true;
-                setStatus('🤖 Ваш ход! Вы ✕');
-            }else if(mode==='friend'){
-                symbolBlock.classList.add('hidden');
-                firstMoveBlock.classList.add('hidden');
-                roomInfo.classList.add('hidden');
-                chatSection.classList.add('hidden');
-                turnIndicator.classList.remove('hidden');
-                scoreboard.classList.add('hidden');
-                playerSymbol='X';opponentSymbol='O';
-                gameActive=true;
-                updateTurnIndicator('X');
-                setStatus('👥 Ходит ✕');
-            }else if(mode==='online'){
-                symbolBlock.classList.add('hidden');
-                firstMoveBlock.classList.add('hidden');
-                roomInfo.classList.remove('hidden');
-                chatSection.classList.remove('hidden');
-                turnIndicator.classList.remove('hidden');
-                scoreboard.classList.remove('hidden');
-                updateScores();
-                initOnlineMode();
-            }else{
-                symbolBlock.classList.remove('hidden');
-                firstMoveBlock.classList.remove('hidden');
-                roomInfo.classList.add('hidden');
-                chatSection.classList.add('hidden');
-                turnIndicator.classList.add('hidden');
-                scoreboard.classList.add('hidden');
-                playerSymbol=null;opponentSymbol=null;firstMove=null;
-                document.getElementById('btnX').className='btn';
-                document.getElementById('btnO').className='btn';
-                document.getElementById('btnMe').className='btn';
-                document.getElementById('btnOpp').className='btn';
-                setStatus('Выберите символ и кто первый');
-            }
+            ['tabCalc','tabAI','tabFriend','tabOnline'].forEach((id,i)=>{const m=['calc','ai','friend','online'];document.getElementById(id).className=m[i]===mode?'mode-tab active':'mode-tab'});
+            const sb=document.getElementById('symbolBlock'),fb=document.getElementById('firstMoveBlock'),ri=document.getElementById('roomInfo'),cs=document.getElementById('chatSection'),ti=document.getElementById('turnIndicator');
+            board=['','','','','','','','',''];gameActive=false;waitingForOpponent=false;updateBoard();clearHighlights();
+            if(mode==='ai'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.add('hidden');playerSymbol='X';opponentSymbol='O';gameActive=true;setStatus('🤖 Ваш ход! Вы ✕')}
+            else if(mode==='friend'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.remove('hidden');playerSymbol='X';opponentSymbol='O';gameActive=true;updateTurnIndicator('X');setStatus('👥 Ходит ✕')}
+            else if(mode==='online'){sb.classList.add('hidden');fb.classList.add('hidden');ri.classList.remove('hidden');cs.classList.remove('hidden');ti.classList.remove('hidden');initOnlineMode()}
+            else{sb.classList.remove('hidden');fb.classList.remove('hidden');ri.classList.add('hidden');cs.classList.add('hidden');ti.classList.add('hidden');playerSymbol=null;opponentSymbol=null;firstMove=null;document.getElementById('btnX').className='btn';document.getElementById('btnO').className='btn';document.getElementById('btnMe').className='btn';document.getElementById('btnOpp').className='btn';setStatus('Выберите символ и кто первый')}
         }
 
-        function updateTurnIndicator(symbol){
-            const dotYou=document.getElementById('dotYou');
-            const dotOpp=document.getElementById('dotOpp');
-            dotYou.className='turn-dot';
-            dotOpp.className='turn-dot';
-            if(symbol===playerSymbol||symbol===window._onlinePlayerSymbol){
-                dotYou.classList.add('active');
-            }else{
-                dotOpp.classList.add('active');
-            }
+        function updateTurnIndicator(s){const dy=document.getElementById('dotYou'),dp=document.getElementById('dotOpp');dy.className='turn-dot';dp.className='turn-dot';if(s===playerSymbol||s===window._ops)dy.classList.add('active');else dp.classList.add('active')}
+
+        function cellClick(i){
+            if(!gameActive)return;if(board[i]!==''){setStatus('⚠️ Клетка занята!');return}
+            if(currentMode==='online'){if(waitingForOpponent)return;onlineCellClick(i);return}
+            if(currentMode==='ai'){board[i]=playerSymbol;updateBoard();if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🤖 ИИ думает...');setTimeout(()=>{const m=getAIMove();if(m!==null){board[m]=opponentSymbol;updateBoard();if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 ИИ выиграл');gameActive=false}else if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false}else setStatus('🤖 Ваш ход')}},400);return}
+            if(currentMode==='friend'){const mv=board.filter(c=>c!=='').length,s=mv%2===0?'X':'O';board[i]=s;updateBoard();if(checkWinner(s)){highlightWinCells(s);setStatus('🎉 '+s+' выиграл!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}const nx=mv%2===0?'○':'✕';updateTurnIndicator(nx==='✕'?'X':'O');setStatus('👥 Ходит '+nx);return}
+            if(currentMode==='calc'&&waitingForOpponent){board[i]=opponentSymbol;updateBoard();waitingForOpponent=false;clearHighlights();if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 Соперник выиграл');gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🧠 Просчитываю...');setTimeout(()=>makePlayerMove(),400)}
         }
 
-        function updateScores(){
-            document.getElementById('scoreYou').textContent=scores.you;
-            document.getElementById('scoreOpp').textContent=scores.opp;
-            document.getElementById('scoreDraw').textContent=scores.draw;
-        }
+        function makePlayerMove(){if(!gameActive)return;const m=getBestMove();if(m!==null){highlightCell(m);setStatus('💡 Ходите на подсвеченную клетку');setTimeout(()=>{board[m]=playerSymbol;updateBoard();clearHighlights();if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return}setStatus('🎯 Нажмите клетку соперника');waitingForOpponent=true},800)}}
 
-        function cellClick(index){
-            if(!gameActive) return;
-            if(board[index]!==''){setStatus('⚠️ Клетка занята!');return;}
+        function getAIMove(){if(Math.random()<0.25){const e=[];for(let i=0;i<9;i++)if(board[i]==='')e.push(i);if(e.length)return e[Math.floor(Math.random()*e.length)]}return getBestMove()}
 
-            if(currentMode==='online'){
-                if(waitingForOpponent) return;
-                onlineCellClick(index);
-                return;
-            }
+        function getBestMove(){for(let i=0;i<9;i++){if(board[i]===''){board[i]=playerSymbol;if(checkWinner(playerSymbol)){board[i]='';return i}board[i]=''}}for(let i=0;i<9;i++){if(board[i]===''){board[i]=opponentSymbol;if(checkWinner(opponentSymbol)){board[i]='';return i}board[i]=''}}if(board[4]==='')return 4;for(let c of[0,2,6,8])if(board[c]==='')return c;for(let i=0;i<9;i++)if(board[i]==='')return i;return null}
 
-            if(currentMode==='ai'){
-                board[index]=playerSymbol;
-                updateBoard();
-                if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return;}
-                if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return;}
-                
-                setStatus('🤖 ИИ думает...');
-                setTimeout(()=>{
-                    const move=getAIMove();
-                    if(move!==null){
-                        board[move]=opponentSymbol;
-                        updateBoard();
-                        if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 ИИ выиграл');gameActive=false;}
-                        else if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;}
-                        else{setStatus('🤖 Ваш ход');}
-                    }
-                },400);
-                return;
-            }
+        function checkWinner(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return p.some(w=>w.every(i=>board[i]===s))}
+        function highlightWinCells(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(let w of p){if(w.every(i=>board[i]===s)){document.querySelectorAll('.cell').forEach((c,i)=>{if(w.includes(i))c.classList.add('win')});break}}}
+        function isBoardFull(){return board.every(c=>c!=='')}
+        function highlightCell(i){clearHighlights();document.querySelectorAll('.cell')[i].classList.add('suggestion')}
+        function clearHighlights(){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('suggestion','win'))}
+        function updateBoard(){document.querySelectorAll('.cell').forEach((c,i)=>{c.textContent=board[i];c.className='cell';if(board[i]==='X')c.classList.add('x');if(board[i]==='O')c.classList.add('o')})}
+        function setStatus(m){document.getElementById('status').textContent=m}
 
-            if(currentMode==='friend'){
-                const moves=board.filter(c=>c!=='').length;
-                const cs=moves%2===0?'X':'O';
-                board[index]=cs;
-                updateBoard();
-                if(checkWinner(cs)){
-                    highlightWinCells(cs);
-                    setStatus('🎉 '+cs+' выиграл!');
-                    spawnConfetti();
-                    gameActive=false;
-                    return;
-                }
-                if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return;}
-                const next=moves%2===0?'○':'✕';
-                updateTurnIndicator(next==='✕'?'X':'O');
-                setStatus('👥 Ходит '+next);
-                return;
-            }
-
-            if(currentMode==='calc'&&waitingForOpponent){
-                board[index]=opponentSymbol;
-                updateBoard();
-                waitingForOpponent=false;
-                clearHighlights();
-                if(checkWinner(opponentSymbol)){highlightWinCells(opponentSymbol);setStatus('😞 Соперник выиграл');gameActive=false;return;}
-                if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return;}
-                setStatus('🧠 Просчитываю...');
-                setTimeout(()=>makePlayerMove(),400);
-            }
-        }
-
-        function makePlayerMove(){
-            if(!gameActive) return;
-            const move=getBestMove();
-            if(move!==null){
-                highlightCell(move);
-                setStatus('💡 Ходите на подсвеченную клетку');
-                setTimeout(()=>{
-                    board[move]=playerSymbol;
-                    updateBoard();
-                    clearHighlights();
-                    if(checkWinner(playerSymbol)){highlightWinCells(playerSymbol);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;return;}
-                    if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;return;}
-                    setStatus('🎯 Нажмите клетку соперника');
-                    waitingForOpponent=true;
-                },800);
-            }
-        }
-
-        function getAIMove(){
-            if(Math.random()<0.25){
-                const empty=[];
-                for(let i=0;i<9;i++) if(board[i]==='') empty.push(i);
-                if(empty.length) return empty[Math.floor(Math.random()*empty.length)];
-            }
-            return getBestMove();
-        }
-
-        function getBestMove(){
-            for(let i=0;i<9;i++){
-                if(board[i]===''){
-                    board[i]=playerSymbol;
-                    if(checkWinner(playerSymbol)){board[i]='';return i;}
-                    board[i]='';
-                }
-            }
-            for(let i=0;i<9;i++){
-                if(board[i]===''){
-                    board[i]=opponentSymbol;
-                    if(checkWinner(opponentSymbol)){board[i]='';return i;}
-                    board[i]='';
-                }
-            }
-            if(board[4]==='') return 4;
-            for(let c of[0,2,6,8]) if(board[c]==='') return c;
-            for(let i=0;i<9;i++) if(board[i]==='') return i;
-            return null;
-        }
-
-        function checkWinner(symbol){
-            const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return p.some(w=>w.every(i=>board[i]===symbol));
-        }
-
-        function highlightWinCells(symbol){
-            const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of p){
-                if(w.every(i=>board[i]===symbol)){
-                    document.querySelectorAll('.cell').forEach((c,i)=>{if(w.includes(i))c.classList.add('win')});
-                    break;
-                }
-            }
-        }
-
-        function isBoardFull(){return board.every(c=>c!=='');}
-        function highlightCell(i){clearHighlights();document.querySelectorAll('.cell')[i].classList.add('suggestion');}
-        function clearHighlights(){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('suggestion','win'));}
-        
-        function updateBoard(){
-            document.querySelectorAll('.cell').forEach((c,i)=>{
-                c.textContent=board[i];
-                c.className='cell';
-                if(board[i]==='X')c.classList.add('x');
-                if(board[i]==='O')c.classList.add('o');
-            });
-        }
-
-        function setStatus(m){document.getElementById('status').textContent=m;}
-
-        function chooseSymbol(symbol){
-            if(currentMode!=='calc') return;
-            if(gameActive) return;
-            playerSymbol=symbol;
-            opponentSymbol=symbol==='X'?'O':'X';
-            document.getElementById('btnX').className=symbol==='X'?'btn active-x':'btn';
-            document.getElementById('btnO').className=symbol==='O'?'btn active-o':'btn';
-            if(firstMove) startCalcGame();
-        }
-
-        function chooseFirst(who){
-            if(currentMode!=='calc') return;
-            if(gameActive) return;
-            firstMove=who;
-            document.getElementById('btnMe').className=who==='me'?'btn active-first':'btn';
-            document.getElementById('btnOpp').className=who==='opp'?'btn active-first':'btn';
-            if(playerSymbol) startCalcGame();
-        }
-
-        function startCalcGame(){
-            gameActive=true;
-            board=['','','','','','','','',''];
-            waitingForOpponent=false;
-            updateBoard();
-            clearHighlights();
-            
-            if(firstMove==='opp'){
-                setStatus('🎯 Нажмите клетку соперника');
-                waitingForOpponent=true;
-            }else{
-                setStatus('🤔 Анализирую...');
-                setTimeout(()=>makePlayerMove(),500);
-            }
-        }
+        function chooseSymbol(s){if(currentMode!=='calc')return;if(gameActive)return;playerSymbol=s;opponentSymbol=s==='X'?'O':'X';document.getElementById('btnX').className=s==='X'?'btn active-x':'btn';document.getElementById('btnO').className=s==='O'?'btn active-o':'btn';if(firstMove)startCalcGame()}
+        function chooseFirst(w){if(currentMode!=='calc')return;if(gameActive)return;firstMove=w;document.getElementById('btnMe').className=w==='me'?'btn active-first':'btn';document.getElementById('btnOpp').className=w==='opp'?'btn active-first':'btn';if(playerSymbol)startCalcGame()}
+        function startCalcGame(){gameActive=true;board=['','','','','','','','',''];waitingForOpponent=false;updateBoard();clearHighlights();if(firstMove==='opp'){setStatus('🎯 Нажмите клетку соперника');waitingForOpponent=true}else{setStatus('🤔 Анализирую...');setTimeout(()=>makePlayerMove(),500)}}
 
         function resetGame(){
-            board=['','','','','','','','',''];
-            updateBoard();
-            clearHighlights();
-            
-            if(currentMode==='ai'){
+            board=['','','','','','','','',''];updateBoard();clearHighlights();
+            if(currentMode==='online'){
                 gameActive=true;
-                playerSymbol='X';opponentSymbol='O';
-                waitingForOpponent=false;
-                setStatus('🤖 Ваш ход! Вы ✕');
-            }else if(currentMode==='friend'){
-                gameActive=true;
-                waitingForOpponent=false;
-                updateTurnIndicator('X');
-                setStatus('👥 Ходит ✕');
-            }else if(currentMode==='online'){
-                gameActive=true;
-                waitingForOpponent=window._onlinePlayerSymbol==='O';
-                updateTurnIndicator(waitingForOpponent?'O':window._onlinePlayerSymbol);
+                waitingForOpponent=window._ops==='O';
+                updateTurnIndicator(waitingForOpponent?'O':window._ops);
                 setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход');
                 if(!waitingForOpponent) broadcastMove(null);
-            }else if(currentMode==='calc'){
-                gameActive=false;
-                waitingForOpponent=false;
-                if(playerSymbol&&firstMove) startCalcGame();
-                else setStatus('Выберите символ и кто первый');
-            }
+            }else if(currentMode==='ai'){gameActive=true;playerSymbol='X';opponentSymbol='O';setStatus('🤖 Ваш ход! Вы ✕')}
+            else if(currentMode==='friend'){gameActive=true;updateTurnIndicator('X');setStatus('👥 Ходит ✕')}
+            else if(currentMode==='calc'){gameActive=false;waitingForOpponent=false;if(playerSymbol&&firstMove)startCalcGame();else setStatus('Выберите символ и кто первый')}
         }
 
-        // ============ ОНЛАЙН ============
+        // Онлайн
         function initOnlineMode(){
-            if(!window.supabase){
-                document.getElementById('roomInfo').innerHTML='⏳ Загрузка...';
-                loadSupabase();
-                return;
-            }
-            setupOnline();
+            if(!window.supabase){document.getElementById('roomInfo').innerHTML='⏳ Загрузка...';loadSupabase();return}
+            setupOnline()
         }
-
         function loadSupabase(){
-            const script=document.createElement('script');
-            script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.onload=()=>{
-                window.supabase=supabase.createClient(
-                    'https://mvnmqtvdazrrcrufaely.supabase.co',
-                    'sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7'
-                );
-                setupOnline();
-            };
-            script.onerror=()=>{
-                document.getElementById('roomInfo').innerHTML='❌ Ошибка загрузки';
-            };
-            document.head.appendChild(script);
+            const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            s.onload=()=>{window.supabase=supabase.createClient('https://mvnmqtvdazrrcrufaely.supabase.co','sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7');setupOnline()};
+            s.onerror=()=>{document.getElementById('roomInfo').innerHTML='❌ Ошибка'};document.head.appendChild(s)
         }
-
         function setupOnline(){
-            const params=new URLSearchParams(window.location.search);
-            const joinRoom=params.get('room');
-            
-            if(joinRoom){
-                window._onlineRoomId=joinRoom;
-                window._onlinePlayerSymbol='O';
-                document.getElementById('dotYou').textContent='😎 Вы (○)';
-                document.getElementById('dotOpp').textContent='🎯 Игрок 1 (✕)';
-                joinOnlineRoom();
-            }else{
-                window._onlineRoomId=Math.random().toString(36).substr(2,6);
-                window._onlinePlayerSymbol='X';
-                document.getElementById('dotYou').textContent='😎 Вы (✕)';
-                document.getElementById('dotOpp').textContent='🎯 Игрок 2 (○)';
-                createOnlineRoom();
-            }
+            const p=new URLSearchParams(window.location.search),j=p.get('room');
+            if(j){window._orid=j;window._ops='O';document.getElementById('dotYou').textContent='😎 Вы (○)';document.getElementById('dotOpp').textContent='🎯 Игрок 1 (✕)';joinOnlineRoom()}
+            else{window._orid=Math.random().toString(36).substr(2,6);window._ops='X';document.getElementById('dotYou').textContent='😎 Вы (✕)';document.getElementById('dotOpp').textContent='🎯 Игрок 2 (○)';createOnlineRoom()}
         }
-
         async function createOnlineRoom(){
-            const link=window.location.origin+window.location.pathname+'?room='+window._onlineRoomId;
-            document.getElementById('roomInfo').innerHTML=`
-                Код: <b>${window._onlineRoomId}</b><br>
-                <input class="join-input" value="${link}" readonly onclick="this.select()">
-                <button class="copy-btn" onclick="copyOnlineLink()">📋 Копировать</button>
-            `;
-            
-            try{
-                await window.supabase.from('games').upsert({
-                    id:window._onlineRoomId,
-                    board:'["","","","","","","","",""]',
-                    turn:'X',
-                    chat:'[]',
-                    status:'waiting'
-                });
-            }catch(e){}
-            
-            subscribeToRoom();
-            gameActive=true;
-            updateTurnIndicator('X');
-            setStatus('🌐 Ожидание соперника...');
+            const l=window.location.origin+window.location.pathname+'?room='+window._orid;
+            document.getElementById('roomInfo').innerHTML=`Код: <b>${window._orid}</b><br><input class="join-input" value="${l}" readonly onclick="this.select()"><button class="copy-btn" onclick="copyOnlineLink()">📋 Копировать</button>`;
+            try{await window.supabase.from('games').upsert({id:window._orid,board:'["","","","","","","","",""]',turn:'X',chat:'[]',status:'waiting'})}catch(e){}
+            subscribeToRoom();gameActive=true;updateTurnIndicator('X');setStatus('🌐 Ожидание соперника...')
         }
-
         async function joinOnlineRoom(){
-            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${window._onlineRoomId}</b>...`;
-            
-            try{
-                const {data}=await window.supabase.from('games').select('*').eq('id',window._onlineRoomId).single();
-                
-                if(data){
-                    await window.supabase.from('games').update({status:'playing'}).eq('id',window._onlineRoomId);
-                    document.getElementById('roomInfo').innerHTML=`Комната: <b>${window._onlineRoomId}</b> | Вы: <b>O</b>`;
-                    subscribeToRoom();
-                    gameActive=true;
-                    waitingForOpponent=true;
-                    updateTurnIndicator('X');
-                    setStatus('🎯 Ход соперника (✕)');
-                }else{
-                    document.getElementById('roomInfo').innerHTML='❌ Комната не найдена';
-                }
-            }catch(e){
-                document.getElementById('roomInfo').innerHTML='❌ Ошибка';
-            }
+            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${window._orid}</b>...`;
+            try{const {data}=await window.supabase.from('games').select('*').eq('id',window._orid).single();
+            if(data){await window.supabase.from('games').update({status:'playing'}).eq('id',window._orid);document.getElementById('roomInfo').innerHTML=`Комната: <b>${window._orid}</b> | Вы: <b>O</b>`;subscribeToRoom();gameActive=true;waitingForOpponent=true;updateTurnIndicator('X');setStatus('🎯 Ход соперника (✕)')}else document.getElementById('roomInfo').innerHTML='❌ Комната не найдена'}catch(e){document.getElementById('roomInfo').innerHTML='❌ Ошибка'}
         }
-
         function subscribeToRoom(){
-            window._onlineChannel=window.supabase
-                .channel('room_'+window._onlineRoomId)
-                .on('broadcast',{event:'move'},(payload)=>{
-                    const data=payload.payload;
-                    board=data.board;
-                    updateBoard();
-                    clearHighlights();
-                    
-                    if(data.winner){
-                        highlightWinCells(data.winner);
-                        if(data.winner===window._onlinePlayerSymbol){
-                            setStatus('🎉 Вы выиграли!');
-                            scores.you++;
-                        }else{
-                            setStatus('😞 Соперник выиграл');
-                            scores.opp++;
-                        }
-                        updateScores();
-                        spawnConfetti();
-                        gameActive=false;
-                    }else if(isBoardFull()){
-                        setStatus('🤝 Ничья!');
-                        scores.draw++;
-                        updateScores();
-                        gameActive=false;
-                    }else{
-                        waitingForOpponent=data.turn!==window._onlinePlayerSymbol;
-                        updateTurnIndicator(data.turn);
-                        setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход');
-                    }
-                })
-                .on('broadcast',{event:'chat'},(payload)=>{
-                    const msg=payload.payload;
-                    const container=document.getElementById('chatMessages');
-                    const cls=msg.player===window._onlinePlayerSymbol?'chat-message you':'chat-message opponent';
-                    container.innerHTML+=`<div class="${cls}"><b>${msg.player===window._onlinePlayerSymbol?'Вы':(window._onlinePlayerSymbol==='X'?'Игрок 2':'Игрок 1')}:</b> ${msg.text}</div>`;
-                    container.scrollTop=container.scrollHeight;
-                })
-                .subscribe();
+            window._oc=window.supabase.channel('room_'+window._orid)
+            .on('broadcast',{event:'move'},(payload)=>{const d=payload.payload;board=d.board;updateBoard();clearHighlights();
+                if(d.winner){highlightWinCells(d.winner);setStatus(d.winner===window._ops?'🎉 Вы выиграли!':'😞 Соперник выиграл');spawnConfetti();gameActive=false}
+                else if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false}
+                else{waitingForOpponent=d.turn!==window._ops;updateTurnIndicator(d.turn);setStatus(waitingForOpponent?'🎯 Ход соперника':'😎 Ваш ход')}})
+            .on('broadcast',{event:'chat'},(payload)=>{const m=payload.payload,c=document.getElementById('chatMessages'),cl=m.player===window._ops?'chat-message you':'chat-message opponent';c.innerHTML+=`<div class="${cl}"><b>${m.player===window._ops?'Вы':(window._ops==='X'?'Игрок 2':'Игрок 1')}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight})
+            .subscribe()
         }
+        function copyOnlineLink(){const i=document.querySelector('.join-input');if(i){i.select();navigator.clipboard.writeText(i.value);setStatus('✅ Ссылка скопирована!')}}
+        async function sendMessage(){const i=document.getElementById('chatInput'),t=i.value.trim();if(!t||!window._oc)return;await window._oc.send({type:'broadcast',event:'chat',payload:{player:window._ops,text:t}});const c=document.getElementById('chatMessages');c.innerHTML+=`<div class="chat-message you"><b>Вы:</b> ${t}</div>`;c.scrollTop=c.scrollHeight;i.value=''}
+        async function broadcastMove(w){if(!window._oc)return;await window._oc.send({type:'broadcast',event:'move',payload:{board:board,turn:window._ops==='X'?'O':'X',winner:w||null}})}
+        function onlineCellClick(i){board[i]=window._ops;updateBoard();if(checkWinner(window._ops)){highlightWinCells(window._ops);setStatus('🎉 Вы выиграли!');spawnConfetti();gameActive=false;broadcastMove(window._ops);return}if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;broadcastMove(null);return}waitingForOpponent=true;updateTurnIndicator(window._ops==='X'?'O':'X');setStatus('🎯 Ход соперника');broadcastMove(null)}
 
-        function copyOnlineLink(){
-            const input=document.querySelector('.join-input');
-            if(input){
-                input.select();
-                navigator.clipboard.writeText(input.value);
-                setStatus('✅ Ссылка скопирована!');
-            }
-        }
-
-        async function sendMessage(){
-            const input=document.getElementById('chatInput');
-            const text=input.value.trim();
-            if(!text||!window._onlineChannel) return;
-            
-            await window._onlineChannel.send({
-                type:'broadcast',
-                event:'chat',
-                payload:{player:window._onlinePlayerSymbol,text:text}
-            });
-            
-            const container=document.getElementById('chatMessages');
-            container.innerHTML+=`<div class="chat-message you"><b>Вы:</b> ${text}</div>`;
-            container.scrollTop=container.scrollHeight;
-            input.value='';
-        }
-
-        async function broadcastMove(winner){
-            if(!window._onlineChannel) return;
-            await window._onlineChannel.send({
-                type:'broadcast',
-                event:'move',
-                payload:{
-                    board:board,
-                    turn:window._onlinePlayerSymbol==='X'?'O':'X',
-                    winner:winner||null
-                }
-            });
-        }
-
-        function onlineCellClick(index){
-            board[index]=window._onlinePlayerSymbol;
-            updateBoard();
-            
-            if(checkWinner(window._onlinePlayerSymbol)){
-                highlightWinCells(window._onlinePlayerSymbol);
-                setStatus('🎉 Вы выиграли!');
-                scores.you++;
-                updateScores();
-                spawnConfetti();
-                gameActive=false;
-                broadcastMove(window._onlinePlayerSymbol);
-                return;
-            }
-            if(isBoardFull()){
-                setStatus('🤝 Ничья!');
-                scores.draw++;
-                updateScores();
-                gameActive=false;
-                broadcastMove(null);
-                return;
-            }
-            
-            waitingForOpponent=true;
-            updateTurnIndicator(opponentSymbol||'O');
-            setStatus('🎯 Ход соперника');
-            broadcastMove(null);
-        }
-
-        updateBoard();
-        if(currentMode==='calc') setStatus('Выберите символ и кто первый');
+        updateBoard();if(currentMode==='calc')setStatus('Выберите символ и кто первый');
     </script>
 </body>
 </html>
