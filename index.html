@@ -2,10 +2,38 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO Assistant - by Sonki</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>XO Assistant Pro - by Sonki</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        :root {
+            --bg: #0a0a0a;
+            --bg2: rgba(10, 10, 20, 0.7);
+            --text: rgba(255, 255, 255, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --cell-bg: rgba(20, 20, 30, 0.8);
+            --settings-bg: rgba(255, 255, 255, 0.05);
+            --status-bg: rgba(255, 255, 255, 0.05);
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-border: rgba(255, 255, 255, 0.2);
+            --btn-text: rgba(255, 255, 255, 0.7);
+            --shadow: 0 0 50px rgba(255, 0, 110, 0.3), 0 0 100px rgba(58, 134, 255, 0.2);
+        }
+
+        .light-theme {
+            --bg: #f0f2f5;
+            --bg2: rgba(255, 255, 255, 0.8);
+            --text: #1a1a1a;
+            --border: rgba(0, 0, 0, 0.1);
+            --cell-bg: #ffffff;
+            --settings-bg: rgba(255, 255, 255, 0.8);
+            --status-bg: rgba(255, 255, 255, 0.8);
+            --btn-bg: #ffffff;
+            --btn-border: rgba(0, 0, 0, 0.2);
+            --btn-text: #333;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
 
         * {
             margin: 0;
@@ -15,13 +43,14 @@
 
         body {
             font-family: 'Orbitron', sans-serif;
-            background: #0a0a0a;
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden;
+            transition: background 0.5s;
             position: relative;
+            overflow-x: hidden;
         }
 
         .bg-animation {
@@ -39,6 +68,11 @@
                 radial-gradient(ellipse at 20% 20%, #fb5607 0%, transparent 50%);
             animation: bgShift 15s ease-in-out infinite alternate;
             opacity: 0.6;
+            transition: opacity 0.5s;
+        }
+
+        .light-theme .bg-animation {
+            opacity: 0.15;
         }
 
         @keyframes bgShift {
@@ -47,127 +81,117 @@
             100% { transform: scale(1.2) rotate(-5deg); }
         }
 
-        .grid-overlay {
+        .confetti-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 10s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(40px, 40px); }
-        }
-
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
             pointer-events: none;
+            z-index: 100;
         }
 
-        .particle {
+        .confetti {
             position: absolute;
-            border-radius: 50%;
-            animation: floatUp linear infinite;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall linear forwards;
         }
 
-        @keyframes floatUp {
+        @keyframes confettiFall {
             0% {
-                transform: translateY(100vh) scale(0) rotate(0deg);
-                opacity: 0;
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
             }
-            20% { opacity: 1; }
             100% {
-                transform: translateY(-100px) scale(1.5) rotate(720deg);
+                transform: translateY(100vh) rotate(720deg);
                 opacity: 0;
             }
         }
 
-        .neon-rings {
+        .theme-toggle {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .ring {
-            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 2px solid transparent;
-            animation: ringPulse 3s ease-in-out infinite;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
         }
 
-        .ring:nth-child(1) {
-            width: 600px;
-            height: 600px;
-            margin-left: -300px;
-            margin-top: -300px;
-            border-color: rgba(255, 0, 110, 0.3);
-            animation-delay: 0s;
-        }
-
-        .ring:nth-child(2) {
-            width: 700px;
-            height: 700px;
-            margin-left: -350px;
-            margin-top: -350px;
-            border-color: rgba(58, 134, 255, 0.3);
-            animation-delay: 1s;
-        }
-
-        .ring:nth-child(3) {
-            width: 800px;
-            height: 800px;
-            margin-left: -400px;
-            margin-top: -400px;
-            border-color: rgba(131, 56, 236, 0.3);
-            animation-delay: 2s;
-        }
-
-        @keyframes ringPulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
         }
 
         .container {
             position: relative;
             z-index: 10;
-            background: rgba(10, 10, 20, 0.7);
+            background: var(--bg2);
             backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border);
             border-radius: 30px;
-            padding: 40px;
-            width: 480px;
-            box-shadow: 
-                0 0 50px rgba(255, 0, 110, 0.3),
-                0 0 100px rgba(58, 134, 255, 0.2),
-                0 0 150px rgba(131, 56, 236, 0.2),
-                inset 0 0 50px rgba(255, 255, 255, 0.05);
-            animation: containerGlow 3s ease-in-out infinite alternate;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            transition: all 0.5s;
+            margin: 20px;
         }
 
-        @keyframes containerGlow {
-            0% { box-shadow: 0 0 50px rgba(255, 0, 110, 0.3), 0 0 100px rgba(58, 134, 255, 0.2); }
-            100% { box-shadow: 0 0 80px rgba(131, 56, 236, 0.4), 0 0 150px rgba(255, 190, 11, 0.3); }
+        .mode-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            background: var(--settings-bg);
+            border-radius: 15px;
+            padding: 5px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--btn-text);
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .mode-tab.active {
+            background: linear-gradient(135deg, #ff006e, #3a86ff);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 0, 110, 0.3);
+        }
+
+        .mode-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-tab.active:hover {
+            background: linear-gradient(135deg, #ff006e, #3a86ff);
         }
 
         .title {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-size: 2.2em;
             font-weight: 900;
             background: linear-gradient(135deg, #ff006e, #3a86ff, #8338ec, #ffbe0b);
             background-size: 300% 300%;
@@ -186,119 +210,127 @@
 
         .subtitle {
             text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.8em;
-            margin-top: -20px;
-            margin-bottom: 30px;
+            color: var(--btn-text);
+            font-size: 0.7em;
+            margin-top: -15px;
+            margin-bottom: 25px;
             letter-spacing: 3px;
         }
 
         .settings-block {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--settings-bg);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 18px;
+            margin-bottom: 12px;
             backdrop-filter: blur(10px);
             transition: all 0.3s;
         }
 
         .settings-block:hover {
             border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
         }
 
         .settings-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9em;
+            color: var(--text);
+            font-size: 0.8em;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
 
         .button-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
             flex: 1;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            min-width: 80px;
+            padding: 14px 10px;
+            border: 2px solid var(--btn-border);
             border-radius: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
+            background: var(--btn-bg);
+            color: var(--btn-text);
             cursor: pointer;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9em;
+            font-size: 0.8em;
             font-weight: 700;
             letter-spacing: 1px;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
             text-transform: uppercase;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
+            white-space: nowrap;
         }
 
         .btn:hover {
             border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
         }
 
         .btn.active-x {
             background: linear-gradient(135deg, #ff006e, #ff4d6d);
             border-color: #ff006e;
             color: white;
-            box-shadow: 0 0 30px rgba(255, 0, 110, 0.5);
-            animation: btnGlow 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);
         }
 
         .btn.active-o {
             background: linear-gradient(135deg, #3a86ff, #4d9fff);
             border-color: #3a86ff;
             color: white;
-            box-shadow: 0 0 30px rgba(58, 134, 255, 0.5);
-            animation: btnGlow 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.4);
         }
 
         .btn.active-first {
             background: linear-gradient(135deg, #8338ec, #9d5cff);
             border-color: #8338ec;
             color: white;
-            box-shadow: 0 0 30px rgba(131, 56, 236, 0.5);
-            animation: btnGlow 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(131, 56, 236, 0.4);
         }
 
-        @keyframes btnGlow {
-            0%, 100% { box-shadow: 0 0 20px currentColor; }
-            50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
+        .win-probability {
+            background: var(--settings-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 12px 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .prob-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #44cc44, #ffbe0b, #ff4444);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .prob-text {
+            color: var(--text);
+            font-size: 0.75em;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 25px 0;
-            padding: 15px;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 12px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
             position: relative;
         }
 
@@ -323,13 +355,13 @@
 
         .cell {
             aspect-ratio: 1;
-            background: rgba(20, 20, 30, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: var(--cell-bg);
+            border: 2px solid var(--border);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.8em;
+            font-size: 2.5em;
             font-weight: 900;
             cursor: pointer;
             transition: all 0.3s;
@@ -337,23 +369,8 @@
             overflow: hidden;
         }
 
-        .cell::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .cell:hover::after {
-            opacity: 1;
-        }
-
-        .cell:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        .cell:active {
+            transform: scale(0.95);
         }
 
         .cell.x {
@@ -369,12 +386,12 @@
         }
 
         @keyframes popX {
-            0% { transform: scale(1.5) rotate(90deg); opacity: 0; }
+            0% { transform: scale(1.3) rotate(90deg); opacity: 0; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         @keyframes popO {
-            0% { transform: scale(1.5); opacity: 0; border-radius: 50%; }
+            0% { transform: scale(1.3); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
@@ -390,7 +407,7 @@
                 border-color: rgba(255, 190, 11, 0.5);
             }
             50% {
-                box-shadow: 0 0 50px rgba(255, 190, 11, 0.8), 0 0 80px rgba(255, 190, 11, 0.4);
+                box-shadow: 0 0 40px rgba(255, 190, 11, 0.8);
                 border-color: rgba(255, 190, 11, 1);
             }
         }
@@ -401,18 +418,18 @@
 
         @keyframes winCelebrate {
             0% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
-            100% { transform: scale(1.1); box-shadow: 0 0 60px rgba(255, 255, 255, 0.8), 0 0 100px rgba(255, 255, 255, 0.4); }
+            100% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.8); }
         }
 
         .status {
             text-align: center;
             padding: 15px;
             margin: 15px 0;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--status-bg);
+            border: 1px solid var(--border);
             border-radius: 15px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85em;
+            color: var(--text);
+            font-size: 0.8em;
             font-weight: 500;
             letter-spacing: 1px;
             backdrop-filter: blur(10px);
@@ -422,69 +439,181 @@
             justify-content: center;
         }
 
+        .chat-section {
+            background: var(--settings-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .chat-messages {
+            height: 120px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            color: var(--text);
+            font-size: 0.7em;
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            word-break: break-word;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            background: var(--btn-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7em;
+            outline: none;
+        }
+
+        .chat-send {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #ff006e, #3a86ff);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7em;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
         .reset-btn {
             width: 100%;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: var(--btn-bg);
+            border: 2px solid var(--btn-border);
             border-radius: 15px;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--btn-text);
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9em;
+            font-size: 0.8em;
             font-weight: 700;
             cursor: pointer;
             letter-spacing: 2px;
             text-transform: uppercase;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+            margin-top: 10px;
         }
 
         .reset-btn:hover {
-            background: rgba(255, 0, 110, 0.2);
             border-color: #ff006e;
             color: #ff006e;
-            box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
-            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.2);
         }
 
         .footer {
             text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.7em;
+            margin-top: 15px;
+            color: var(--btn-text);
+            font-size: 0.6em;
             letter-spacing: 3px;
-            font-weight: 400;
+            opacity: 0.5;
+        }
+
+        .room-info {
+            text-align: center;
+            color: var(--text);
+            font-size: 0.7em;
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--settings-bg);
+            border-radius: 10px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            padding: 5px 10px;
+            background: var(--btn-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--btn-text);
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6em;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+            
+            .cell {
+                font-size: 2em;
+            }
+            
+            .btn {
+                font-size: 0.7em;
+                padding: 12px 8px;
+            }
+            
+            .mode-tab {
+                font-size: 0.65em;
+                padding: 10px 5px;
+            }
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
     <div class="bg-animation"></div>
-    <div class="grid-overlay"></div>
-    <div class="neon-rings">
-        <div class="ring"></div>
-        <div class="ring"></div>
-        <div class="ring"></div>
-    </div>
-    <div class="particles-container" id="particles"></div>
+    <div class="confetti-container" id="confetti"></div>
 
     <div class="container">
-        <div class="title">XO</div>
-        <div class="subtitle">НЕПОБЕДИМЫЙ ASSISTANT</div>
+        <div class="title">XO PRO</div>
+        <div class="subtitle">ASSISTANT</div>
 
-        <div class="settings-block">
-            <div class="settings-label">🎮 Вы играете за</div>
-            <div class="button-row">
-                <button class="btn" id="btnX" onclick="chooseSymbol('X')">✕ Крестик</button>
-                <button class="btn" id="btnO" onclick="chooseSymbol('O')">○ Нолик</button>
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tabFriend" onclick="switchMode('friend')">🤝 С другом</button>
+            <button class="mode-tab" id="tabAI" onclick="switchMode('ai')">🤖 Против ИИ</button>
+            <button class="mode-tab" id="tabOnline" onclick="switchMode('online')">🌐 Онлайн</button>
+        </div>
+
+        <div id="settingsSection">
+            <div class="settings-block">
+                <div class="settings-label">🎮 Вы играете за</div>
+                <div class="button-row">
+                    <button class="btn" id="btnX" onclick="chooseSymbol('X')">✕ Крестик</button>
+                    <button class="btn" id="btnO" onclick="chooseSymbol('O')">○ Нолик</button>
+                </div>
+            </div>
+
+            <div class="settings-block" id="firstMoveBlock">
+                <div class="settings-label">👑 Первый ход</div>
+                <div class="button-row">
+                    <button class="btn" id="btnMe" onclick="chooseFirst('me')">Я</button>
+                    <button class="btn" id="btnOpp" onclick="chooseFirst('opp')">Соперник</button>
+                </div>
             </div>
         </div>
 
-        <div class="settings-block">
-            <div class="settings-label">👑 Первый ход</div>
-            <div class="button-row">
-                <button class="btn" id="btnMe" onclick="chooseFirst('me')">Я</button>
-                <button class="btn" id="btnOpp" onclick="chooseFirst('opp')">Соперник</button>
+        <div class="win-probability" id="probSection" style="display:none;">
+            <div class="prob-text" id="probText">Вероятность победы: 50%</div>
+            <div class="prob-bar">
+                <div class="prob-fill" id="probFill" style="width: 50%;"></div>
             </div>
         </div>
 
@@ -500,380 +629,27 @@
             <div class="cell" onclick="cellClick(8)"></div>
         </div>
 
-        <div class="status" id="status">Выберите настройки для начала игры</div>
+        <div class="status" id="status">Выберите режим и настройки</div>
+
+        <div class="room-info" id="roomInfo" style="display:none;"></div>
+
+        <div class="chat-section" id="chatSection" style="display:none;">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-row">
+                <input class="chat-input" id="chatInput" placeholder="Сообщение..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="chat-send" onclick="sendMessage()">→</button>
+            </div>
+        </div>
 
         <button class="reset-btn" onclick="resetGame()">🔄 Новая игра</button>
         
         <div class="footer">made by sonki</div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
     <script>
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const colors = ['#ff006e', '#3a86ff', '#8338ec', '#ffbe0b', '#fb5607', '#00f5d4'];
-            
-            for (let i = 0; i < 60; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = (Math.random() * 4 + 1) + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.animationDuration = (Math.random() * 8 + 6) + 's';
-                particle.style.animationDelay = (Math.random() * 8) + 's';
-                particle.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px ${particle.style.background}`;
-                container.appendChild(particle);
-            }
-        }
-
-        let playerSymbol = null;
-        let opponentSymbol = null;
-        let firstMove = null;
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let gameActive = false;
-        let waitingForOpponent = false;
-
-        function chooseSymbol(symbol) {
-            if (gameActive) return;
-            
-            playerSymbol = symbol;
-            opponentSymbol = symbol === 'X' ? 'O' : 'X';
-            
-            document.getElementById('btnX').className = symbol === 'X' ? 'btn active-x' : 'btn';
-            document.getElementById('btnO').className = symbol === 'O' ? 'btn active-o' : 'btn';
-            
-            checkReady();
-        }
-
-        function chooseFirst(who) {
-            if (gameActive) return;
-            
-            firstMove = who;
-            
-            document.getElementById('btnMe').className = who === 'me' ? 'btn active-first' : 'btn';
-            document.getElementById('btnOpp').className = who === 'opp' ? 'btn active-first' : 'btn';
-            
-            checkReady();
-        }
-
-        function checkReady() {
-            if (playerSymbol && firstMove) {
-                startGame();
-            }
-        }
-
-        function startGame() {
-            gameActive = true;
-            board = ['', '', '', '', '', '', '', '', ''];
-            waitingForOpponent = false;
-            
-            updateBoard();
-            clearHighlights();
-            
-            if (firstMove === 'opp') {
-                setStatus('🎯 Нажмите на клетку, куда пошёл соперник');
-                waitingForOpponent = true;
-            } else {
-                setStatus('🤔 Анализирую позицию...');
-                setTimeout(() => makePlayerMove(), 600);
-            }
-        }
-
-        function cellClick(index) {
-            if (!gameActive) return;
-
-            if (waitingForOpponent) {
-                if (board[index] !== '') {
-                    setStatus('⚠️ Клетка занята! Выберите другую');
-                    return;
-                }
-                
-                board[index] = opponentSymbol;
-                updateBoard();
-                waitingForOpponent = false;
-                clearHighlights();
-                
-                if (checkWinner(opponentSymbol)) {
-                    highlightWinCells(opponentSymbol);
-                    setStatus('😞 Соперник выиграл');
-                    gameActive = false;
-                    return;
-                }
-                
-                if (isBoardFull()) {
-                    setStatus('🤝 Ничья!');
-                    gameActive = false;
-                    return;
-                }
-                
-                setStatus('🧠 Просчитываю оптимальный ход...');
-                setTimeout(() => makePlayerMove(), 500);
-            }
-        }
-
-        // УЛУЧШЕННЫЙ АЛГОРИТМ - НЕПОБЕДИМЫЙ
-        function getBestMove() {
-            // 1. Проверяем, можем ли мы выиграть сейчас
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = playerSymbol;
-                    if (checkWinner(playerSymbol)) {
-                        board[i] = '';
-                        return i; // Немедленная победа!
-                    }
-                    board[i] = '';
-                }
-            }
-            
-            // 2. Блокируем победный ход соперника
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = opponentSymbol;
-                    if (checkWinner(opponentSymbol)) {
-                        board[i] = '';
-                        return i; // Блокируем угрозу!
-                    }
-                    board[i] = '';
-                }
-            }
-            
-            // 3. Если центр свободен - занимаем его
-            if (board[4] === '') {
-                return 4;
-            }
-            
-            // 4. Если мы играем крестиками и это первый ход, а центр занят - занимаем угол
-            if (playerSymbol === 'X' && countMoves() === 1) {
-                const corners = [0, 2, 6, 8];
-                for (let corner of corners) {
-                    if (board[corner] === '') {
-                        return corner;
-                    }
-                }
-            }
-            
-            // 5. Проверяем, не создаёт ли соперник вилку
-            const forkBlock = blockOpponentFork();
-            if (forkBlock !== null) {
-                return forkBlock;
-            }
-            
-            // 6. Создаём свою вилку
-            const forkCreate = createFork();
-            if (forkCreate !== null) {
-                return forkCreate;
-            }
-            
-            // 7. Занимаем противоположный угол
-            const oppositeCorner = getOppositeCorner();
-            if (oppositeCorner !== null) {
-                return oppositeCorner;
-            }
-            
-            // 8. Занимаем любой свободный угол
-            const corners = [0, 2, 6, 8];
-            for (let corner of corners) {
-                if (board[corner] === '') {
-                    return corner;
-                }
-            }
-            
-            // 9. Занимаем любую свободную клетку
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    return i;
-                }
-            }
-            
-            return null;
-        }
-
-        function countMoves() {
-            return board.filter(cell => cell !== '').length;
-        }
-
-        function blockOpponentFork() {
-            // Проверяем все возможные ходы соперника, которые могут создать вилку
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = opponentSymbol;
-                    let winCount = 0;
-                    
-                    // Считаем, сколько победных линий создаст этот ход
-                    for (let j = 0; j < 9; j++) {
-                        if (board[j] === '') {
-                            board[j] = opponentSymbol;
-                            if (checkWinner(opponentSymbol)) {
-                                winCount++;
-                            }
-                            board[j] = '';
-                        }
-                    }
-                    
-                    board[i] = '';
-                    
-                    // Если ход создаёт больше одной победной линии - блокируем
-                    if (winCount >= 2) {
-                        return i;
-                    }
-                }
-            }
-            return null;
-        }
-
-        function createFork() {
-            // Ищем ход, который создаст нам вилку
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = playerSymbol;
-                    let winCount = 0;
-                    
-                    for (let j = 0; j < 9; j++) {
-                        if (board[j] === '') {
-                            board[j] = playerSymbol;
-                            if (checkWinner(playerSymbol)) {
-                                winCount++;
-                            }
-                            board[j] = '';
-                        }
-                    }
-                    
-                    board[i] = '';
-                    
-                    if (winCount >= 2) {
-                        return i;
-                    }
-                }
-            }
-            return null;
-        }
-
-        function getOppositeCorner() {
-            const corners = [
-                { corner: 0, opposite: 8 },
-                { corner: 2, opposite: 6 },
-                { corner: 6, opposite: 2 },
-                { corner: 8, opposite: 0 }
-            ];
-            
-            for (let pair of corners) {
-                if (board[pair.corner] === opponentSymbol && board[pair.opposite] === '') {
-                    return pair.opposite;
-                }
-            }
-            return null;
-        }
-
-        function makePlayerMove() {
-            if (!gameActive) return;
-            
-            const move = getBestMove();
-            if (move !== null && move !== undefined) {
-                highlightCell(move);
-                setStatus(`💡 Ходите на подсвеченную клетку (${move + 1})`);
-                
-                setTimeout(() => {
-                    board[move] = playerSymbol;
-                    updateBoard();
-                    clearHighlights();
-                    
-                    if (checkWinner(playerSymbol)) {
-                        highlightWinCells(playerSymbol);
-                        setStatus('🎉 Поздравляем! Вы выиграли!');
-                        gameActive = false;
-                        return;
-                    }
-                    
-                    if (isBoardFull()) {
-                        setStatus('🤝 Ничья!');
-                        gameActive = false;
-                        return;
-                    }
-                    
-                    setStatus('🎯 Нажмите на клетку, куда пошёл соперник');
-                    waitingForOpponent = true;
-                }, 1000);
-            }
-        }
-
-        function checkWinner(symbol) {
-            const winPatterns = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
-            ];
-
-            return winPatterns.some(pattern => 
-                pattern.every(index => board[index] === symbol)
-            );
-        }
-
-        function highlightWinCells(symbol) {
-            const winPatterns = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
-            ];
-
-            for (let pattern of winPatterns) {
-                if (pattern.every(index => board[index] === symbol)) {
-                    const cells = document.querySelectorAll('.cell');
-                    pattern.forEach(index => {
-                        cells[index].classList.add('win');
-                    });
-                    break;
-                }
-            }
-        }
-
-        function isBoardFull() {
-            return board.every(cell => cell !== '');
-        }
-
-        function highlightCell(index) {
-            clearHighlights();
-            const cells = document.querySelectorAll('.cell');
-            cells[index].classList.add('suggestion');
-        }
-
-        function clearHighlights() {
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach(cell => cell.classList.remove('suggestion', 'win'));
-        }
-
-        function updateBoard() {
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach((cell, index) => {
-                cell.textContent = board[index];
-                cell.className = 'cell';
-                if (board[index] === 'X') cell.classList.add('x');
-                if (board[index] === 'O') cell.classList.add('o');
-            });
-        }
-
-        function setStatus(message) {
-            document.getElementById('status').textContent = message;
-        }
-
-        function resetGame() {
-            playerSymbol = null;
-            opponentSymbol = null;
-            firstMove = null;
-            board = ['', '', '', '', '', '', '', '', ''];
-            gameActive = false;
-            waitingForOpponent = false;
-            
-            document.getElementById('btnX').className = 'btn';
-            document.getElementById('btnO').className = 'btn';
-            document.getElementById('btnMe').className = 'btn';
-            document.getElementById('btnOpp').className = 'btn';
-            
-            updateBoard();
-            clearHighlights();
-            setStatus('Выберите настройки для начала игры');
-        }
-
-        createParticles();
-    </script>
-</body>
-</html>
+        // Звуковые эффекты
+        const sounds = {
+            move: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACAf39/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af39/gH9/f4B/f3+Af
