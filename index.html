@@ -5,388 +5,350 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>XO Assistant — Sonki</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
         
         :root {
-            --bg: #0d0d0d;
-            --bg-card: #1a1a1a;
-            --text: #ffffff;
-            --text2: #999;
-            --accent: #6c5ce7;
-            --accent2: #00cec9;
-            --x-color: #ff6b6b;
-            --o-color: #74b9ff;
-            --win-color: #00b894;
-            --border: #2a2a2a;
-            --cell-bg: #141414;
-            --btn-bg: #1e1e1e;
-            --hover: #252525;
-            --shadow: 0 20px 60px rgba(0,0,0,0.5);
+            --bg: #06060d;
+            --card: #0f0f1a;
+            --text: #f0f0f5;
+            --muted: #6b6b80;
+            --x: #ff3b6e;
+            --o: #4da6ff;
+            --accent: #a855f7;
+            --accent2: #06d6a0;
+            --gold: #ffd166;
+            --border: #1e1e30;
+            --cell: #12121f;
+            --glow-x: rgba(255,59,110,0.5);
+            --glow-o: rgba(77,166,255,0.5);
+            --glow-accent: rgba(168,85,247,0.4);
         }
         
         .light-theme {
-            --bg: #f8f9fa;
-            --bg-card: #ffffff;
+            --bg: #fafafe;
+            --card: #ffffff;
             --text: #1a1a2e;
-            --text2: #666;
-            --border: #e0e0e0;
-            --cell-bg: #f1f3f5;
-            --btn-bg: #ffffff;
-            --hover: #f1f3f5;
-            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --muted: #8e8ea0;
+            --border: #e8e8f0;
+            --cell: #f4f4fa;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.4s;
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(108,92,231,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0,206,201,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255,107,107,0.05) 0%, transparent 50%);
+            transition: all 0.5s;
+            overflow-x: hidden;
         }
         
-        .container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 28px 24px;
-            width: 95%;
-            max-width: 440px;
-            box-shadow: var(--shadow);
-            transition: all 0.4s;
+        /* Анимированные частицы фона */
+        .particles {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(2); opacity: 0; }
+        }
+        
+        /* Градиентные орбы */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            animation: orbMove 12s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--x); top: -10%; left: -5%; opacity: 0.2; animation-delay: 0s; }
+        .orb-2 { width: 350px; height: 350px; background: var(--o); bottom: -10%; right: -5%; opacity: 0.2; animation-delay: -4s; }
+        .orb-3 { width: 300px; height: 300px; background: var(--accent); top: 50%; left: 50%; opacity: 0.15; animation-delay: -8s; }
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, -30px) scale(1.3); }
+            100% { transform: translate(-20px, 20px) scale(1.1); }
         }
         
         .theme-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            cursor: pointer;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
-            transition: all 0.3s;
+            position: fixed; top: 20px; right: 20px; z-index: 999;
+            width: 48px; height: 48px; border-radius: 16px;
+            background: var(--card); border: 2px solid var(--border);
+            cursor: pointer; font-size: 1.3em;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text); transition: all 0.3s;
+            backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .theme-btn:hover { transform: scale(1.08) rotate(5deg); border-color: var(--accent); box-shadow: 0 0 30px var(--glow-accent); }
+        
+        .container {
+            position: relative; z-index: 10;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 32px;
+            padding: 30px 24px;
+            width: 95%;
+            max-width: 460px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+            transition: all 0.5s;
             backdrop-filter: blur(10px);
         }
-        .theme-btn:hover { transform: scale(1.08); border-color: var(--accent); }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 34px;
+            background: linear-gradient(135deg, var(--x), var(--accent), var(--o), var(--accent2));
+            z-index: -1;
+            opacity: 0.4;
+            animation: borderGlow 6s ease-in-out infinite;
+            filter: blur(8px);
+        }
+        @keyframes borderGlow {
+            0%,100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
         
         .logo {
-            text-align: center;
-            margin-bottom: 6px;
-            font-size: 2em;
-            font-weight: 900;
-            letter-spacing: -1px;
+            text-align: center; margin-bottom: 4px;
+            font-size: 2.4em; font-weight: 900; letter-spacing: -2px;
         }
-        .logo span:first-child { color: var(--x-color); }
-        .logo span:last-child { color: var(--o-color); }
+        .logo .x { color: var(--x); text-shadow: 0 0 40px var(--glow-x); animation: logoGlow 3s ease-in-out infinite; }
+        .logo .o { color: var(--o); text-shadow: 0 0 40px var(--glow-o); animation: logoGlow 3s ease-in-out 0.5s infinite; }
+        @keyframes logoGlow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
         
         .badge {
-            text-align: center;
-            font-size: 0.7em;
-            font-weight: 600;
-            color: var(--text2);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
+            text-align: center; font-size: 0.68em; font-weight: 700;
+            color: var(--muted); letter-spacing: 3px;
+            text-transform: uppercase; margin-bottom: 22px;
         }
         
         .tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-            background: var(--cell-bg);
-            border-radius: 14px;
-            padding: 4px;
+            display: flex; gap: 4px; margin-bottom: 20px;
+            background: var(--cell); border-radius: 16px; padding: 4px;
         }
         .tab {
-            flex: 1;
-            padding: 10px 6px;
-            border: none;
-            border-radius: 11px;
-            background: transparent;
-            color: var(--text2);
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7em;
-            font-weight: 700;
-            transition: all 0.3s;
-            text-align: center;
-            letter-spacing: -0.3px;
+            flex: 1; padding: 10px 4px; border: none; border-radius: 13px;
+            background: transparent; color: var(--muted);
+            cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.68em; font-weight: 700; transition: all 0.3s;
+            text-align: center; letter-spacing: -0.3px;
         }
         .tab.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(108,92,231,0.3);
+            background: linear-gradient(135deg, var(--accent), var(--x));
+            color: #fff; box-shadow: 0 6px 20px rgba(168,85,247,0.4);
+            transform: scale(1.03);
         }
-        .tab:hover:not(.active) { color: var(--text); }
+        .tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.03); }
         
         .settings-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            display: flex; gap: 8px; margin-bottom: 10px;
         }
         .settings-row .btn {
-            flex: 1;
-            padding: 11px 10px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            background: var(--btn-bg);
-            color: var(--text);
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.78em;
-            font-weight: 600;
-            transition: all 0.25s;
-            text-align: center;
+            flex: 1; padding: 12px 10px;
+            border: 2px solid var(--border); border-radius: 14px;
+            background: var(--cell); color: var(--text);
+            cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.78em; font-weight: 700;
+            transition: all 0.3s; text-align: center;
         }
-        .settings-row .btn:hover { border-color: var(--accent); background: var(--hover); }
-        .settings-row .btn.sel-x { background: var(--x-color); border-color: var(--x-color); color: #fff; }
-        .settings-row .btn.sel-o { background: var(--o-color); border-color: var(--o-color); color: #fff; }
-        .settings-row .btn.sel-first { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .settings-row .btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .settings-row .btn.sel-x { background: var(--x); border-color: var(--x); color: #fff; box-shadow: 0 0 25px var(--glow-x); animation: btnPulse 2s ease-in-out infinite; }
+        .settings-row .btn.sel-o { background: var(--o); border-color: var(--o); color: #fff; box-shadow: 0 0 25px var(--glow-o); animation: btnPulse 2s ease-in-out infinite; }
+        .settings-row .btn.sel-first { background: linear-gradient(135deg, var(--accent), var(--x)); border-color: transparent; color: #fff; box-shadow: 0 0 25px var(--glow-accent); }
+        @keyframes btnPulse { 0%,100% { box-shadow: 0 0 20px currentColor; } 50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; } }
         
         .label-sm {
-            font-size: 0.7em;
-            font-weight: 700;
-            color: var(--text2);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: block;
+            font-size: 0.68em; font-weight: 700; color: var(--muted);
+            letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; display: block;
         }
         
         .board-wrap {
-            background: var(--cell-bg);
-            border-radius: 20px;
-            padding: 10px;
-            margin: 16px 0;
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
+            background: var(--cell); border-radius: 22px;
+            padding: 12px; margin: 18px 0;
+            border: 2px solid var(--border);
+            position: relative; overflow: hidden;
         }
         .board-wrap::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, var(--accent), var(--accent2), var(--x-color), var(--accent));
-            animation: spin 8s linear infinite;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 0;
+            content: ''; position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, var(--x), var(--accent), var(--o), var(--accent2), var(--gold), var(--x));
+            animation: spin 10s linear infinite;
+            opacity: 0; transition: opacity 0.5s; z-index: 0;
         }
-        .board-wrap.thinking::after { opacity: 0.08; }
+        .board-wrap.thinking::after { opacity: 0.06; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         
         .board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            position: relative;
-            z-index: 1;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; position: relative; z-index: 1;
         }
         .cell {
             aspect-ratio: 1;
-            background: var(--bg-card);
+            background: var(--card);
             border: 2px solid var(--border);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2em;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text);
-            position: relative;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.4em; font-weight: 900;
+            cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+            color: var(--text); position: relative;
         }
-        .cell:active { transform: scale(0.94); }
-        .cell.X { color: var(--x-color); animation: pop 0.35s cubic-bezier(0.4,0,0.2,1); }
-        .cell.O { color: var(--o-color); animation: pop 0.35s cubic-bezier(0.4,0,0.2,1); }
-        @keyframes pop { 0% { transform: scale(1.35); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .cell:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .cell:active { transform: scale(0.93); }
+        .cell.X { color: var(--x); text-shadow: 0 0 30px var(--glow-x); animation: popIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .cell.O { color: var(--o); text-shadow: 0 0 30px var(--glow-o); animation: popIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+        @keyframes popIn { 0% { transform: scale(1.4) rotate(15deg); opacity: 0; } 60% { transform: scale(0.95); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        
         .cell.hint {
             border-color: var(--accent2) !important;
-            box-shadow: 0 0 25px rgba(0,206,201,0.3);
-            animation: hintPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 35px rgba(6,214,160,0.4), inset 0 0 20px rgba(6,214,160,0.05);
+            animation: hintPulse 1.2s ease-in-out infinite;
         }
-        @keyframes hintPulse { 0%,100% { box-shadow: 0 0 15px rgba(0,206,201,0.2); } 50% { box-shadow: 0 0 35px rgba(0,206,201,0.5); } }
-        .cell.win-cell { animation: winBounce 0.5s ease-in-out infinite alternate; }
-        @keyframes winBounce { 0% { transform: scale(1); } 100% { transform: scale(1.06); box-shadow: 0 0 30px var(--win-color); } }
+        @keyframes hintPulse {
+            0%,100% { box-shadow: 0 0 20px rgba(6,214,160,0.3); }
+            50% { box-shadow: 0 0 50px rgba(6,214,160,0.6), 0 0 80px rgba(6,214,160,0.2); }
+        }
         
-        .turn-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+        .cell.win-cell {
+            animation: winBounce 0.4s ease-in-out infinite alternate;
+            border-color: var(--accent2) !important;
         }
+        @keyframes winBounce {
+            0% { transform: scale(1); box-shadow: 0 0 20px var(--accent2); }
+            100% { transform: scale(1.07); box-shadow: 0 0 50px var(--accent2), 0 0 80px rgba(6,214,160,0.5); }
+        }
+        
+        .turn-bar { display: flex; gap: 8px; margin-bottom: 12px; }
         .turn-item {
-            flex: 1;
-            padding: 10px;
-            border-radius: 12px;
-            background: var(--cell-bg);
-            text-align: center;
-            font-size: 0.72em;
-            font-weight: 700;
-            color: var(--text2);
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            flex: 1; padding: 10px; border-radius: 14px;
+            background: var(--cell); text-align: center;
+            font-size: 0.7em; font-weight: 700; color: var(--muted);
+            transition: all 0.3s; border: 2px solid transparent;
         }
         .turn-item.active {
-            border-color: var(--accent);
-            color: var(--text);
-            background: var(--btn-bg);
-            box-shadow: 0 0 20px rgba(108,92,231,0.2);
+            border-color: var(--accent); color: var(--text);
+            background: var(--card); box-shadow: 0 0 25px var(--glow-accent);
+            animation: turnGlow 1.5s ease-in-out infinite;
         }
+        @keyframes turnGlow { 0%,100% { box-shadow: 0 0 15px var(--glow-accent); } 50% { box-shadow: 0 0 35px var(--glow-accent); } }
         
         .status-msg {
-            text-align: center;
-            padding: 12px;
-            margin: 10px 0;
-            background: var(--cell-bg);
-            border-radius: 12px;
-            color: var(--text);
-            font-size: 0.78em;
-            font-weight: 600;
+            text-align: center; padding: 14px; margin: 10px 0;
+            background: var(--cell); border-radius: 14px;
+            color: var(--text); font-size: 0.8em; font-weight: 700;
+            border: 1px solid var(--border);
         }
         
         .btn-main {
-            width: 100%;
-            padding: 14px;
-            background: var(--btn-bg);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.78em;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 1px;
-            transition: all 0.3s;
+            width: 100%; padding: 15px;
+            background: var(--cell); border: 2px solid var(--border);
+            border-radius: 16px; color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8em; font-weight: 800; cursor: pointer;
+            letter-spacing: 1.5px; transition: all 0.3s;
             text-transform: uppercase;
         }
-        .btn-main:hover { border-color: var(--accent); background: var(--hover); }
+        .btn-main:hover { border-color: var(--x); background: var(--card); box-shadow: 0 0 30px rgba(255,59,110,0.2); transform: translateY(-2px); }
         
         .room-box {
-            background: var(--cell-bg);
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 12px;
-            text-align: center;
-            font-size: 0.72em;
-            color: var(--text);
-        }
-        .room-box .code { font-size: 1.4em; font-weight: 900; letter-spacing: 2px; color: var(--accent2); }
-        .room-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            background: var(--bg-card);
+            background: var(--cell); border-radius: 16px;
+            padding: 16px; margin-bottom: 12px;
+            text-align: center; font-size: 0.72em; color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.75em;
-            text-align: center;
-            outline: none;
+        }
+        .room-box .code {
+            font-size: 1.6em; font-weight: 900; letter-spacing: 3px;
+            color: var(--accent2); margin: 8px 0;
+            text-shadow: 0 0 30px rgba(6,214,160,0.4);
+        }
+        .room-box input {
+            width: 100%; padding: 11px; margin: 8px 0;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75em; text-align: center; outline: none;
         }
         .btn-copy {
-            display: inline-block;
-            padding: 10px 18px;
-            background: var(--accent);
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.75em;
-            font-weight: 700;
-            transition: all 0.3s;
+            display: inline-block; padding: 12px 22px;
+            background: linear-gradient(135deg, var(--accent), var(--x));
+            border: none; border-radius: 12px; color: #fff;
+            cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.78em; font-weight: 800; transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(168,85,247,0.3);
         }
-        .btn-copy:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(168,85,247,0.5); }
         
         .chat-box {
-            background: var(--cell-bg);
-            border-radius: 14px;
-            padding: 12px;
-            margin-top: 10px;
+            background: var(--cell); border-radius: 16px;
+            padding: 14px; margin-top: 10px; border: 1px solid var(--border);
         }
         .chat-msgs {
-            height: 90px;
-            overflow-y: auto;
-            margin-bottom: 8px;
-            padding: 6px;
-            background: var(--bg-card);
-            border-radius: 8px;
+            height: 100px; overflow-y: auto; margin-bottom: 8px;
+            padding: 8px; background: var(--card); border-radius: 10px;
         }
         .chat-msg {
-            font-size: 0.68em;
-            margin-bottom: 4px;
-            padding: 6px 10px;
-            background: var(--cell-bg);
-            border-radius: 8px;
-            color: var(--text);
+            font-size: 0.68em; margin-bottom: 5px;
+            padding: 7px 12px; background: var(--cell);
+            border-radius: 10px; color: var(--text);
+            animation: slideIn 0.3s ease;
         }
-        .chat-msg.me { border-left: 3px solid var(--accent); }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .chat-msg.me { border-left: 3px solid var(--x); }
         .chat-msg.they { border-left: 3px solid var(--accent2); }
         .chat-row { display: flex; gap: 6px; }
         .chat-input {
-            flex: 1;
-            padding: 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.7em;
-            outline: none;
+            flex: 1; padding: 11px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.7em; outline: none;
         }
         .chat-send {
-            padding: 10px 14px;
-            background: var(--accent);
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.75em;
+            padding: 11px 16px;
+            background: linear-gradient(135deg, var(--accent), var(--x));
+            border: none; border-radius: 12px; color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800; cursor: pointer; font-size: 0.78em;
+            transition: all 0.3s;
         }
+        .chat-send:hover { transform: scale(1.05); }
         
         .hidden { display: none !important; }
         .footer {
-            text-align: center;
-            margin-top: 14px;
-            color: var(--text2);
-            font-size: 0.6em;
-            letter-spacing: 2px;
+            text-align: center; margin-top: 14px;
+            color: var(--muted); font-size: 0.6em; letter-spacing: 2px;
         }
         
         @media (max-width: 400px) {
-            .container { padding: 20px 16px; }
-            .cell { font-size: 1.8em; }
-            .tab { font-size: 0.62em; padding: 8px 4px; }
+            .container { padding: 20px 14px; border-radius: 24px; }
+            .cell { font-size: 2em; border-radius: 12px; }
+            .tab { font-size: 0.6em; padding: 8px 2px; }
         }
     </style>
 </head>
 <body>
+    <!-- Фоновые орбы -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="particles" id="particles"></div>
+    
     <button class="theme-btn" onclick="toggleTheme()" id="tBtn">🌙</button>
     
     <div class="container">
-        <div class="logo"><span>X</span><span>O</span></div>
+        <div class="logo"><span class="x">X</span><span class="o">O</span></div>
         <div class="badge">Assistant</div>
         
         <div class="tabs">
@@ -441,10 +403,27 @@
     </div>
     
     <script>
-        // Theme
+        // Частицы фона
+        (function(){
+            const c=document.getElementById('particles');
+            const colors=['#ff3b6e','#4da6ff','#a855f7','#06d6a0','#ffd166'];
+            for(let i=0;i<50;i++){
+                const p=document.createElement('div');
+                p.className='particle';
+                p.style.left=Math.random()*100+'%';
+                p.style.width=p.style.height=(Math.random()*3+2)+'px';
+                p.style.background=colors[Math.floor(Math.random()*colors.length)];
+                p.style.animationDuration=(Math.random()*10+8)+'s';
+                p.style.animationDelay=Math.random()*8+'s';
+                p.style.boxShadow=`0 0 ${Math.random()*8+4}px ${p.style.background}`;
+                c.appendChild(p);
+            }
+        })();
+        
+        // Тема
         let dark=true;
-        function toggleTheme(){dark=!dark;document.body.className=dark?'':'light-theme';document.getElementById('tBtn').textContent=dark?'🌙':'☀️';localStorage.setItem('xo-theme',dark?'dark':'light')}
-        if(localStorage.getItem('xo-theme')==='light'){dark=false;document.body.className='light-theme';document.getElementById('tBtn').textContent='☀️'}
+        function toggleTheme(){dark=!dark;document.body.className=dark?'':'light-theme';document.getElementById('tBtn').textContent=dark?'🌙':'☀️';localStorage.setItem('xo-theme2',dark?'dark':'light')}
+        if(localStorage.getItem('xo-theme2')==='light'){dark=false;document.body.className='light-theme';document.getElementById('tBtn').textContent='☀️'}
         
         let pSym=null,oSym=null,first=null;
         let board=['','','','','','','','',''];
@@ -459,9 +438,20 @@
             board=['','','','','','','','',''];active=false;waiting=false;updateB();clearH();
             if(m==='ai'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.add('hidden');tb.classList.add('hidden');cb.classList.add('hidden');pSym='X';oSym='O';active=true;setS('Ваш ход')}
             else if(m==='friend'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.add('hidden');tb.classList.remove('hidden');cb.classList.add('hidden');pSym='X';oSym='O';active=true;upTurn('X');setS('Ходит ✕')}
-            else if(m==='online'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.remove('hidden');tb.classList.remove('hidden');cb.classList.remove('hidden');initOnline()}
+            else if(m==='online'){sb.classList.add('hidden');fb.classList.add('hidden');rb.classList.remove('hidden');tb.classList.remove('hidden');cb.classList.remove('hidden');
+                // Проверяем есть ли room в URL
+                const p=new URLSearchParams(window.location.search);
+                if(p.get('room')) initOnline();
+                else initOnline();
+            }
             else{sb.classList.remove('hidden');fb.classList.remove('hidden');rb.classList.add('hidden');tb.classList.add('hidden');cb.classList.add('hidden');pSym=null;oSym=null;first=null;document.getElementById('bX').className='btn';document.getElementById('bO').className='btn';document.getElementById('bMe').className='btn';document.getElementById('bOp').className='btn';setS('Выберите настройки')}
         }
+        
+        // Автоматический переход в онлайн если есть room в URL
+        (function(){
+            const p=new URLSearchParams(window.location.search);
+            if(p.get('room')){sw('online');}
+        })();
         
         function upTurn(s){
             document.getElementById('tYou').className='turn-item';
@@ -473,12 +463,20 @@
         function clickCell(i){
             if(!active||board[i]!=='') return;
             if(mode==='online'){if(waiting)return;onlineClick(i);return}
-            if(mode==='ai'){board[i]=pSym;updateB();if(win(pSym)){hw(pSym);setS('Победа!');active=false;return}if(full()){setS('Ничья');active=false;return}setS('ИИ думает...');setTimeout(()=>{const m=aiMove();if(m!==null){board[m]=oSym;updateB();if(win(oSym)){hw(oSym);setS('ИИ выиграл');active=false}else if(full()){setS('Ничья');active=false}else setS('Ваш ход')}},350);return}
-            if(mode==='friend'){const mv=board.filter(c=>c!=='').length,s=mv%2===0?'X':'O';board[i]=s;updateB();if(win(s)){hw(s);setS(s+' выиграл!');active=false;return}if(full()){setS('Ничья');active=false;return}const nx=mv%2===0?'○':'✕';upTurn(nx==='✕'?'X':'O');setS('Ходит '+nx);return}
+            if(mode==='ai'){board[i]=pSym;updateB();if(win(pSym)){hw(pSym);setS('Победа!');active=false;spawnWinEffect();return}if(full()){setS('Ничья');active=false;return}setS('ИИ думает...');document.getElementById('bw').classList.add('thinking');setTimeout(()=>{const m=aiMove();document.getElementById('bw').classList.remove('thinking');if(m!==null){board[m]=oSym;updateB();if(win(oSym)){hw(oSym);setS('ИИ выиграл');active=false}else if(full()){setS('Ничья');active=false}else setS('Ваш ход')}},400);return}
+            if(mode==='friend'){const mv=board.filter(c=>c!=='').length,s=mv%2===0?'X':'O';board[i]=s;updateB();if(win(s)){hw(s);setS(s+' выиграл!');active=false;spawnWinEffect();return}if(full()){setS('Ничья');active=false;return}const nx=mv%2===0?'○':'✕';upTurn(nx==='✕'?'X':'O');setS('Ходит '+nx);return}
             if(mode==='calc'&&waiting){board[i]=oSym;updateB();waiting=false;clearH();if(win(oSym)){hw(oSym);setS('Соперник выиграл');active=false;return}if(full()){setS('Ничья');active=false;return}setS('Просчитываю...');setTimeout(()=>makeHint(),400)}
         }
         
-        function makeHint(){if(!active)return;const m=bestMove();if(m!==null){hintCell(m);setS('Ваш ход → клетка '+(m+1));setTimeout(()=>{board[m]=pSym;updateB();clearH();if(win(pSym)){hw(pSym);setS('Победа!');active=false;return}if(full()){setS('Ничья');active=false;return}setS('Ход соперника');waiting=true},700)}}
+        function spawnWinEffect(){
+            // Создаём вспышку
+            const bw=document.getElementById('bw');
+            bw.style.transition='all 0.3s';
+            bw.style.boxShadow='0 0 80px var(--accent2), 0 0 150px rgba(6,214,160,0.4)';
+            setTimeout(()=>{bw.style.boxShadow='';bw.style.transition='';},800);
+        }
+        
+        function makeHint(){if(!active)return;const m=bestMove();if(m!==null){hintCell(m);setS('Ваш ход → клетка '+(m+1));setTimeout(()=>{board[m]=pSym;updateB();clearH();if(win(pSym)){hw(pSym);setS('Победа!');active=false;spawnWinEffect();return}if(full()){setS('Ничья');active=false;return}setS('Ход соперника');waiting=true},700)}}
         
         function aiMove(){if(Math.random()<0.2){const e=[];for(let i=0;i<9;i++)if(board[i]==='')e.push(i);if(e.length)return e[Math.floor(Math.random()*e.length)]}return bestMove()}
         
@@ -509,7 +507,8 @@
                 active=true;waiting=_pid==='O';
                 upTurn(waiting?'O':_pid);
                 setS(waiting?'Ход соперника':'Ваш ход');
-                if(!waiting) broadcast(null);
+                broadcast({action:'reset'});
+                if(!waiting) broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X'});
             }else if(mode==='ai'){active=true;pSym='X';oSym='O';setS('Ваш ход')}
             else if(mode==='friend'){active=true;upTurn('X');setS('Ходит ✕')}
             else{active=false;waiting=false;if(pSym&&first)startCalc();else setS('Выберите настройки')}
@@ -543,8 +542,9 @@
                 const {data}=await window.supabase.from('games').select('*').eq('id',_rid).single();
                 if(data){
                     await window.supabase.from('games').update({status:'playing'}).eq('id',_rid);
+                    // Скрываем ссылку и показываем что подключен
                     document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';
-                    setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden')},2000);
+                    setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden')},1500);
                     subRoom();active=true;waiting=true;upTurn('X');setS('Ход соперника (✕)');
                 }else document.getElementById('roomBox').innerHTML='<div class="room-box">Комната не найдена</div>';
             }catch(e){document.getElementById('roomBox').innerHTML='<div class="room-box">Ошибка</div>';}
@@ -552,14 +552,36 @@
         function subRoom(){
             if(_oc) window.supabase.removeChannel(_oc);
             _oc=window.supabase.channel('room_'+_rid)
-            .on('broadcast',{event:'move'},(p)=>{const d=p.payload;board=d.board;updateB();clearH();if(d.winner){hw(d.winner);setS(d.winner===_pid?'Вы победили!':'Соперник победил');active=false}else if(full()){setS('Ничья');active=false}else{waiting=d.turn!==_pid;upTurn(d.turn);setS(waiting?'Ход соперника':'Ваш ход')}})
-            .on('broadcast',{event:'chat'},(p)=>{const m=p.payload,c=document.getElementById('chatMsgs'),cl=m.player===_pid?'chat-msg me':'chat-msg they';c.innerHTML+=`<div class="${cl}"><b>${m.player===_pid?'Вы':(_pid==='X'?'Игрок 2':'Игрок 1')}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight})
+            .on('broadcast',{event:'move'},(p)=>{
+                const d=p.payload;
+                if(d.action==='reset'){
+                    board=['','','','','','','','',''];updateB();clearH();
+                    active=true;waiting=_pid==='O';
+                    upTurn(waiting?'O':_pid);
+                    setS(waiting?'Ход соперника':'Ваш ход');
+                    return;
+                }
+                board=d.board;updateB();clearH();
+                if(d.winner){hw(d.winner);setS(d.winner===_pid?'Вы победили!':'Соперник победил');active=false;spawnWinEffect();}
+                else if(full()){setS('Ничья');active=false}
+                else{waiting=d.turn!==_pid;upTurn(d.turn);setS(waiting?'Ход соперника':'Ваш ход')}
+            })
+            .on('broadcast',{event:'chat'},(p)=>{
+                const m=p.payload,c=document.getElementById('chatMsgs'),cl=m.player===_pid?'chat-msg me':'chat-msg they';
+                c.innerHTML+=`<div class="${cl}"><b>${m.player===_pid?'Вы':(_pid==='X'?'Игрок 2':'Игрок 1')}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight;
+            })
             .subscribe();
         }
         function copyLink(){const i=document.querySelector('.room-box input');if(i){i.select();navigator.clipboard.writeText(i.value);setS('Ссылка скопирована!')}}
         async function sendChat(){const i=document.getElementById('chatIn'),t=i.value.trim();if(!t||!_oc)return;await _oc.send({type:'broadcast',event:'chat',payload:{player:_pid,text:t}});const c=document.getElementById('chatMsgs');c.innerHTML+=`<div class="chat-msg me"><b>Вы:</b> ${t}</div>`;c.scrollTop=c.scrollHeight;i.value=''}
-        async function broadcast(w){if(!_oc)return;await _oc.send({type:'broadcast',event:'move',payload:{board:board,turn:_pid==='X'?'O':'X',winner:w||null}})}
-        function onlineClick(i){board[i]=_pid;updateB();if(win(_pid)){hw(_pid);setS('Вы победили!');active=false;broadcast(_pid);return}if(full()){setS('Ничья');active=false;broadcast(null);return}waiting=true;upTurn(_pid==='X'?'O':'X');setS('Ход соперника');broadcast(null)}
+        async function broadcast(d){if(!_oc)return;await _oc.send({type:'broadcast',event:'move',payload:d})}
+        function onlineClick(i){
+            board[i]=_pid;updateB();
+            if(win(_pid)){hw(_pid);setS('Вы победили!');active=false;spawnWinEffect();broadcast({action:'move',board:board,turn:_pid,winner:_pid});return}
+            if(full()){setS('Ничья');active=false;broadcast({action:'move',board:board,turn:_pid,winner:null});return}
+            waiting=true;upTurn(_pid==='X'?'O':'X');setS('Ход соперника');
+            broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X',winner:null});
+        }
         
         updateB();setS('Выберите режим');
     </script>
