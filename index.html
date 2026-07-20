@@ -76,8 +76,7 @@
         }
 
         .confetti {
-            position: absolute;
-            width: 12px; height: 12px;
+            position: absolute; width: 12px; height: 12px;
             animation: confettiFall linear forwards;
         }
 
@@ -115,8 +114,7 @@
             background: transparent; color: var(--btn-text);
             cursor: pointer; font-family: 'Orbitron', sans-serif;
             font-size: 0.55em; font-weight: 700;
-            transition: all 0.3s; text-transform: uppercase;
-            text-align: center; line-height: 1.2;
+            transition: all 0.3s; text-align: center; line-height: 1.2;
         }
 
         .mode-tab.active {
@@ -400,22 +398,6 @@
     </div>
 
     <script>
-        // Supabase конфиг
-        const SUPABASE_URL = 'https://mvnmqtvdazrrcrufaely.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7';
-        
-        let supabase = null;
-        let onlineChannel = null;
-        let onlineRoomId = null;
-        let onlinePlayerSymbol = null;
-
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch(e) {
-            console.log('Supabase offline');
-        }
-
-        // Конфетти
         function spawnConfetti() {
             const container = document.getElementById('confetti');
             const colors = ['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4'];
@@ -434,7 +416,6 @@
             }
         }
 
-        // Тема
         let isDark=true;
         function toggleTheme(){
             isDark=!isDark;
@@ -448,18 +429,18 @@
             document.getElementById('themeBtn').textContent='☀️';
         }
 
-        // Игра
+        const SUPABASE_URL = 'https://mvnmqtvdazrrcrufaely.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         let playerSymbol=null,opponentSymbol=null,firstMove=null;
         let board=['','','','','','','','',''];
         let gameActive=false,waitingForOpponent=false;
         let currentMode='calc';
+        let onlineChannel=null,onlineRoomId=null,onlinePlayerSymbol=null;
 
         function switchMode(mode){
-            // Отключаем предыдущий онлайн канал
-            if(onlineChannel){
-                supabase.removeChannel(onlineChannel);
-                onlineChannel=null;
-            }
+            if(onlineChannel){supabase.removeChannel(onlineChannel);onlineChannel=null;}
             
             currentMode=mode;
             ['tabCalc','tabAI','tabFriend','tabOnline'].forEach((id,i)=>{
@@ -483,8 +464,7 @@
                 firstMoveBlock.classList.add('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
-                playerSymbol='X';
-                opponentSymbol='O';
+                playerSymbol='X';opponentSymbol='O';
                 gameActive=true;
                 setStatus('🤖 Ваш ход! Вы ✕');
             }else if(mode==='friend'){
@@ -492,8 +472,7 @@
                 firstMoveBlock.classList.add('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
-                playerSymbol='X';
-                opponentSymbol='O';
+                playerSymbol='X';opponentSymbol='O';
                 gameActive=true;
                 setStatus('👥 Ходит ✕');
             }else if(mode==='online'){
@@ -507,9 +486,7 @@
                 firstMoveBlock.classList.remove('hidden');
                 roomInfo.classList.add('hidden');
                 chatSection.classList.add('hidden');
-                playerSymbol=null;
-                opponentSymbol=null;
-                firstMove=null;
+                playerSymbol=null;opponentSymbol=null;firstMove=null;
                 document.getElementById('btnX').className='btn';
                 document.getElementById('btnO').className='btn';
                 document.getElementById('btnMe').className='btn';
@@ -518,24 +495,15 @@
             }
         }
 
-        // Онлайн режим через Supabase
         function initOnlineMode(){
-            if(!supabase){
-                document.getElementById('roomInfo').innerHTML='❌ Онлайн временно недоступен';
-                setStatus('❌ Сервер не подключён');
-                return;
-            }
-            
             const params=new URLSearchParams(window.location.search);
             const joinRoom=params.get('room');
             
             if(joinRoom){
-                // Присоединяемся
                 onlineRoomId=joinRoom;
                 onlinePlayerSymbol='O';
                 joinOnlineRoom();
             }else{
-                // Создаём комнату
                 onlineRoomId=Math.random().toString(36).substr(2,6);
                 onlinePlayerSymbol='X';
                 createOnlineRoom();
@@ -551,46 +519,27 @@
                 <br><small>Отправьте ссылку другу</small>
             `;
             
-            // Сохраняем начальное состояние
-            await supabase
-                .from('games')
-                .upsert({
-                    id: onlineRoomId,
-                    board: ['','','','','','','','',''],
-                    turn: 'X',
-                    chat: [],
-                    status: 'waiting'
-                });
+            await supabase.from('games').upsert({
+                id:onlineRoomId,
+                board:'["","","","","","","","",""]',
+                turn:'X',
+                chat:'[]',
+                status:'waiting'
+            });
             
-            // Подписываемся на изменения
             subscribeToRoom();
-            
             gameActive=true;
             setStatus('🌐 Ожидание соперника...');
-            document.getElementById('roomInfo').innerHTML+=`<br><small>Ожидаем игрока O...</small>`;
         }
 
         async function joinOnlineRoom(){
-            document.getElementById('roomInfo').innerHTML=`
-                Подключение к комнате <b>${onlineRoomId}</b>...
-            `;
+            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${onlineRoomId}</b>...`;
             
-            const {data}=await supabase
-                .from('games')
-                .select('*')
-                .eq('id',onlineRoomId)
-                .single();
+            const {data}=await supabase.from('games').select('*').eq('id',onlineRoomId).single();
             
             if(data){
-                await supabase
-                    .from('games')
-                    .update({status:'playing',turn:'X'})
-                    .eq('id',onlineRoomId);
-                
-                document.getElementById('roomInfo').innerHTML=`
-                    Комната: <b>${onlineRoomId}</b> | Вы: <b>O</b>
-                `;
-                
+                await supabase.from('games').update({status:'playing'}).eq('id',onlineRoomId);
+                document.getElementById('roomInfo').innerHTML=`Комната: <b>${onlineRoomId}</b> | Вы: <b>O</b>`;
                 subscribeToRoom();
                 gameActive=true;
                 waitingForOpponent=true;
@@ -709,7 +658,6 @@
             if(!gameActive) return;
             if(board[index]!==''){setStatus('⚠️ Клетка занята!');return;}
 
-            // Онлайн
             if(currentMode==='online'){
                 if(waitingForOpponent) return;
                 board[index]=onlinePlayerSymbol;
@@ -731,7 +679,6 @@
                 return;
             }
 
-            // ИИ
             if(currentMode==='ai'){
                 board[index]=playerSymbol;
                 updateBoard();
@@ -752,7 +699,6 @@
                 return;
             }
 
-            // Передача
             if(currentMode==='friend'){
                 const moves=board.filter(c=>c!=='').length;
                 const cs=moves%2===0?'X':'O';
@@ -764,7 +710,6 @@
                 return;
             }
 
-            // Ассистент
             if(currentMode==='calc'&&waitingForOpponent){
                 board[index]=opponentSymbol;
                 updateBoard();
