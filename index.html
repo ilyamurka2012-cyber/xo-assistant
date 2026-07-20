@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>XO Assistant - by Sonki</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
@@ -59,6 +58,7 @@
                 radial-gradient(ellipse at 20% 20%, #fb5607 0%, transparent 50%);
             animation: bgShift 15s ease-in-out infinite alternate;
             opacity: 0.6;
+            transition: opacity 0.5s;
         }
 
         .light-theme .bg-animation { opacity: 0.15; }
@@ -209,15 +209,8 @@
 
         .cell:active { transform: scale(0.95); }
 
-        .cell.x {
-            color: #ff006e; text-shadow: 0 0 20px rgba(255,0,110,0.8);
-            animation: popIn 0.3s ease;
-        }
-
-        .cell.o {
-            color: #3a86ff; text-shadow: 0 0 20px rgba(58,134,255,0.8);
-            animation: popIn 0.3s ease;
-        }
+        .cell.x { color: #ff006e; text-shadow: 0 0 20px rgba(255,0,110,0.8); animation: popIn 0.3s ease; }
+        .cell.o { color: #3a86ff; text-shadow: 0 0 20px rgba(58,134,255,0.8); animation: popIn 0.3s ease; }
 
         @keyframes popIn {
             0% { transform: scale(1.3); opacity: 0; }
@@ -235,9 +228,7 @@
             50% { box-shadow: 0 0 40px rgba(255,190,11,0.8); }
         }
 
-        .cell.win {
-            animation: winCelebrate 0.4s ease-in-out infinite alternate;
-        }
+        .cell.win { animation: winCelebrate 0.4s ease-in-out infinite alternate; }
 
         @keyframes winCelebrate {
             0% { transform: scale(1); }
@@ -262,8 +253,7 @@
             display: inline-block; padding: 6px 12px;
             background: var(--btn-bg); border: 1px solid var(--border);
             border-radius: 8px; color: var(--btn-text); cursor: pointer;
-            font-family: 'Orbitron', sans-serif; font-size: 0.65em;
-            margin: 5px; transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif; font-size: 0.65em; margin: 5px;
         }
 
         .join-input {
@@ -398,6 +388,7 @@
     </div>
 
     <script>
+        // ============ ОСНОВНАЯ ИГРА (работает всегда) ============
         function spawnConfetti() {
             const container = document.getElementById('confetti');
             const colors = ['#ff006e','#3a86ff','#8338ec','#ffbe0b','#fb5607','#00f5d4'];
@@ -429,18 +420,16 @@
             document.getElementById('themeBtn').textContent='☀️';
         }
 
-        const SUPABASE_URL = 'https://mvnmqtvdazrrcrufaely.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
         let playerSymbol=null,opponentSymbol=null,firstMove=null;
         let board=['','','','','','','','',''];
         let gameActive=false,waitingForOpponent=false;
         let currentMode='calc';
-        let onlineChannel=null,onlineRoomId=null,onlinePlayerSymbol=null;
 
         function switchMode(mode){
-            if(onlineChannel){supabase.removeChannel(onlineChannel);onlineChannel=null;}
+            if(window._onlineChannel){
+                window.supabase.removeChannel(window._onlineChannel);
+                window._onlineChannel=null;
+            }
             
             currentMode=mode;
             ['tabCalc','tabAI','tabFriend','tabOnline'].forEach((id,i)=>{
@@ -495,187 +484,13 @@
             }
         }
 
-        function initOnlineMode(){
-            const params=new URLSearchParams(window.location.search);
-            const joinRoom=params.get('room');
-            
-            if(joinRoom){
-                onlineRoomId=joinRoom;
-                onlinePlayerSymbol='O';
-                joinOnlineRoom();
-            }else{
-                onlineRoomId=Math.random().toString(36).substr(2,6);
-                onlinePlayerSymbol='X';
-                createOnlineRoom();
-            }
-        }
-
-        async function createOnlineRoom(){
-            const link=window.location.origin+window.location.pathname+'?room='+onlineRoomId;
-            document.getElementById('roomInfo').innerHTML=`
-                Код комнаты: <b>${onlineRoomId}</b><br>
-                <input class="join-input" value="${link}" readonly onclick="this.select()">
-                <button class="copy-btn" onclick="copyLink()">📋 Копировать</button>
-                <br><small>Отправьте ссылку другу</small>
-            `;
-            
-            await supabase.from('games').upsert({
-                id:onlineRoomId,
-                board:'["","","","","","","","",""]',
-                turn:'X',
-                chat:'[]',
-                status:'waiting'
-            });
-            
-            subscribeToRoom();
-            gameActive=true;
-            setStatus('🌐 Ожидание соперника...');
-        }
-
-        async function joinOnlineRoom(){
-            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${onlineRoomId}</b>...`;
-            
-            const {data}=await supabase.from('games').select('*').eq('id',onlineRoomId).single();
-            
-            if(data){
-                await supabase.from('games').update({status:'playing'}).eq('id',onlineRoomId);
-                document.getElementById('roomInfo').innerHTML=`Комната: <b>${onlineRoomId}</b> | Вы: <b>O</b>`;
-                subscribeToRoom();
-                gameActive=true;
-                waitingForOpponent=true;
-                setStatus('🎯 Ход соперника (X)');
-            }else{
-                document.getElementById('roomInfo').innerHTML='❌ Комната не найдена';
-            }
-        }
-
-        function subscribeToRoom(){
-            onlineChannel=supabase
-                .channel('room_'+onlineRoomId)
-                .on('broadcast',{event:'move'},(payload)=>{
-                    const data=payload.payload;
-                    board=data.board;
-                    updateBoard();
-                    clearHighlights();
-                    
-                    if(data.winner){
-                        highlightWinCells(data.winner);
-                        setStatus(data.winner===onlinePlayerSymbol?'🎉 Вы выиграли!':'😞 Соперник выиграл');
-                        spawnConfetti();
-                        gameActive=false;
-                    }else if(isBoardFull()){
-                        setStatus('🤝 Ничья!');
-                        gameActive=false;
-                    }else{
-                        waitingForOpponent=data.turn!==onlinePlayerSymbol;
-                        setStatus(waitingForOpponent?'🎯 Ход соперника':'🤔 Ваш ход');
-                    }
-                })
-                .on('broadcast',{event:'chat'},(payload)=>{
-                    const msg=payload.payload;
-                    const container=document.getElementById('chatMessages');
-                    container.innerHTML+=`<div class="chat-message"><b>${msg.player}:</b> ${msg.text}</div>`;
-                    container.scrollTop=container.scrollHeight;
-                })
-                .subscribe();
-        }
-
-        function copyLink(){
-            const input=document.querySelector('.join-input');
-            if(input){
-                input.select();
-                navigator.clipboard.writeText(input.value);
-                setStatus('✅ Ссылка скопирована!');
-            }
-        }
-
-        async function sendMessage(){
-            const input=document.getElementById('chatInput');
-            const text=input.value.trim();
-            if(!text||!onlineChannel) return;
-            
-            await onlineChannel.send({
-                type:'broadcast',
-                event:'chat',
-                payload:{player:onlinePlayerSymbol,text:text}
-            });
-            
-            const container=document.getElementById('chatMessages');
-            container.innerHTML+=`<div class="chat-message"><b>Вы:</b> ${text}</div>`;
-            container.scrollTop=container.scrollHeight;
-            input.value='';
-        }
-
-        async function broadcastMove(winner){
-            if(!onlineChannel) return;
-            await onlineChannel.send({
-                type:'broadcast',
-                event:'move',
-                payload:{
-                    board:board,
-                    turn:onlinePlayerSymbol==='X'?'O':'X',
-                    winner:winner||null
-                }
-            });
-        }
-
-        function chooseSymbol(symbol){
-            if(currentMode!=='calc') return;
-            if(gameActive) return;
-            playerSymbol=symbol;
-            opponentSymbol=symbol==='X'?'O':'X';
-            document.getElementById('btnX').className=symbol==='X'?'btn active-x':'btn';
-            document.getElementById('btnO').className=symbol==='O'?'btn active-o':'btn';
-            if(firstMove) startCalcGame();
-        }
-
-        function chooseFirst(who){
-            if(currentMode!=='calc') return;
-            if(gameActive) return;
-            firstMove=who;
-            document.getElementById('btnMe').className=who==='me'?'btn active-first':'btn';
-            document.getElementById('btnOpp').className=who==='opp'?'btn active-first':'btn';
-            if(playerSymbol) startCalcGame();
-        }
-
-        function startCalcGame(){
-            gameActive=true;
-            board=['','','','','','','','',''];
-            waitingForOpponent=false;
-            updateBoard();
-            clearHighlights();
-            
-            if(firstMove==='opp'){
-                setStatus('🎯 Нажмите клетку соперника');
-                waitingForOpponent=true;
-            }else{
-                setStatus('🤔 Анализирую...');
-                setTimeout(()=>makePlayerMove(),500);
-            }
-        }
-
         function cellClick(index){
             if(!gameActive) return;
             if(board[index]!==''){setStatus('⚠️ Клетка занята!');return;}
 
             if(currentMode==='online'){
                 if(waitingForOpponent) return;
-                board[index]=onlinePlayerSymbol;
-                updateBoard();
-                
-                if(checkWinner(onlinePlayerSymbol)){
-                    highlightWinCells(onlinePlayerSymbol);
-                    setStatus('🎉 Вы выиграли!');
-                    spawnConfetti();
-                    gameActive=false;
-                    broadcastMove(onlinePlayerSymbol);
-                    return;
-                }
-                if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;broadcastMove(null);return;}
-                
-                waitingForOpponent=true;
-                setStatus('🎯 Ход соперника');
-                broadcastMove(null);
+                onlineCellClick(index);
                 return;
             }
 
@@ -800,6 +615,41 @@
 
         function setStatus(m){document.getElementById('status').textContent=m;}
 
+        function chooseSymbol(symbol){
+            if(currentMode!=='calc') return;
+            if(gameActive) return;
+            playerSymbol=symbol;
+            opponentSymbol=symbol==='X'?'O':'X';
+            document.getElementById('btnX').className=symbol==='X'?'btn active-x':'btn';
+            document.getElementById('btnO').className=symbol==='O'?'btn active-o':'btn';
+            if(firstMove) startCalcGame();
+        }
+
+        function chooseFirst(who){
+            if(currentMode!=='calc') return;
+            if(gameActive) return;
+            firstMove=who;
+            document.getElementById('btnMe').className=who==='me'?'btn active-first':'btn';
+            document.getElementById('btnOpp').className=who==='opp'?'btn active-first':'btn';
+            if(playerSymbol) startCalcGame();
+        }
+
+        function startCalcGame(){
+            gameActive=true;
+            board=['','','','','','','','',''];
+            waitingForOpponent=false;
+            updateBoard();
+            clearHighlights();
+            
+            if(firstMove==='opp'){
+                setStatus('🎯 Нажмите клетку соперника');
+                waitingForOpponent=true;
+            }else{
+                setStatus('🤔 Анализирую...');
+                setTimeout(()=>makePlayerMove(),500);
+            }
+        }
+
         function resetGame(){
             board=['','','','','','','','',''];
             updateBoard();
@@ -817,7 +667,7 @@
                 setStatus('👥 Ходит ✕');
             }else if(currentMode==='online'){
                 gameActive=true;
-                waitingForOpponent=onlinePlayerSymbol==='O';
+                waitingForOpponent=window._onlinePlayerSymbol==='O';
                 setStatus(waitingForOpponent?'🎯 Ход соперника':'🤔 Ваш ход');
                 if(!waitingForOpponent) broadcastMove(null);
             }else if(currentMode==='calc'){
@@ -826,6 +676,180 @@
                 if(playerSymbol&&firstMove) startCalcGame();
                 else setStatus('Выберите символ и кто первый');
             }
+        }
+
+        // ============ ОНЛАЙН РЕЖИМ (загружается отдельно) ============
+        function initOnlineMode(){
+            if(!window.supabase){
+                document.getElementById('roomInfo').innerHTML='⏳ Загрузка онлайн режима...';
+                loadSupabase();
+                return;
+            }
+            setupOnline();
+        }
+
+        function loadSupabase(){
+            const script=document.createElement('script');
+            script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            script.onload=()=>{
+                window.supabase=supabase.createClient(
+                    'https://mvnmqtvdazrrcrufaely.supabase.co',
+                    'sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7'
+                );
+                setupOnline();
+            };
+            script.onerror=()=>{
+                document.getElementById('roomInfo').innerHTML='❌ Не удалось загрузить онлайн режим';
+            };
+            document.head.appendChild(script);
+        }
+
+        function setupOnline(){
+            const params=new URLSearchParams(window.location.search);
+            const joinRoom=params.get('room');
+            
+            if(joinRoom){
+                window._onlineRoomId=joinRoom;
+                window._onlinePlayerSymbol='O';
+                joinOnlineRoom();
+            }else{
+                window._onlineRoomId=Math.random().toString(36).substr(2,6);
+                window._onlinePlayerSymbol='X';
+                createOnlineRoom();
+            }
+        }
+
+        async function createOnlineRoom(){
+            const link=window.location.origin+window.location.pathname+'?room='+window._onlineRoomId;
+            document.getElementById('roomInfo').innerHTML=`
+                Код: <b>${window._onlineRoomId}</b><br>
+                <input class="join-input" value="${link}" readonly onclick="this.select()">
+                <button class="copy-btn" onclick="copyOnlineLink()">📋 Копировать</button>
+            `;
+            
+            try{
+                await window.supabase.from('games').upsert({
+                    id:window._onlineRoomId,
+                    board:'["","","","","","","","",""]',
+                    turn:'X',
+                    chat:'[]',
+                    status:'waiting'
+                });
+            }catch(e){}
+            
+            subscribeToRoom();
+            gameActive=true;
+            setStatus('🌐 Ожидание соперника...');
+        }
+
+        async function joinOnlineRoom(){
+            document.getElementById('roomInfo').innerHTML=`Подключение к <b>${window._onlineRoomId}</b>...`;
+            
+            try{
+                const {data}=await window.supabase.from('games').select('*').eq('id',window._onlineRoomId).single();
+                
+                if(data){
+                    await window.supabase.from('games').update({status:'playing'}).eq('id',window._onlineRoomId);
+                    document.getElementById('roomInfo').innerHTML=`Комната: <b>${window._onlineRoomId}</b> | Вы: <b>O</b>`;
+                    subscribeToRoom();
+                    gameActive=true;
+                    waitingForOpponent=true;
+                    setStatus('🎯 Ход соперника (X)');
+                }else{
+                    document.getElementById('roomInfo').innerHTML='❌ Комната не найдена';
+                }
+            }catch(e){
+                document.getElementById('roomInfo').innerHTML='❌ Ошибка подключения';
+            }
+        }
+
+        function subscribeToRoom(){
+            window._onlineChannel=window.supabase
+                .channel('room_'+window._onlineRoomId)
+                .on('broadcast',{event:'move'},(payload)=>{
+                    const data=payload.payload;
+                    board=data.board;
+                    updateBoard();
+                    clearHighlights();
+                    
+                    if(data.winner){
+                        highlightWinCells(data.winner);
+                        setStatus(data.winner===window._onlinePlayerSymbol?'🎉 Вы выиграли!':'😞 Соперник выиграл');
+                        spawnConfetti();
+                        gameActive=false;
+                    }else if(isBoardFull()){
+                        setStatus('🤝 Ничья!');
+                        gameActive=false;
+                    }else{
+                        waitingForOpponent=data.turn!==window._onlinePlayerSymbol;
+                        setStatus(waitingForOpponent?'🎯 Ход соперника':'🤔 Ваш ход');
+                    }
+                })
+                .on('broadcast',{event:'chat'},(payload)=>{
+                    const msg=payload.payload;
+                    const container=document.getElementById('chatMessages');
+                    container.innerHTML+=`<div class="chat-message"><b>${msg.player}:</b> ${msg.text}</div>`;
+                    container.scrollTop=container.scrollHeight;
+                })
+                .subscribe();
+        }
+
+        function copyOnlineLink(){
+            const input=document.querySelector('.join-input');
+            if(input){
+                input.select();
+                navigator.clipboard.writeText(input.value);
+                setStatus('✅ Ссылка скопирована!');
+            }
+        }
+
+        async function sendMessage(){
+            const input=document.getElementById('chatInput');
+            const text=input.value.trim();
+            if(!text||!window._onlineChannel) return;
+            
+            await window._onlineChannel.send({
+                type:'broadcast',
+                event:'chat',
+                payload:{player:window._onlinePlayerSymbol,text:text}
+            });
+            
+            const container=document.getElementById('chatMessages');
+            container.innerHTML+=`<div class="chat-message"><b>Вы:</b> ${text}</div>`;
+            container.scrollTop=container.scrollHeight;
+            input.value='';
+        }
+
+        async function broadcastMove(winner){
+            if(!window._onlineChannel) return;
+            await window._onlineChannel.send({
+                type:'broadcast',
+                event:'move',
+                payload:{
+                    board:board,
+                    turn:window._onlinePlayerSymbol==='X'?'O':'X',
+                    winner:winner||null
+                }
+            });
+        }
+
+        function onlineCellClick(index){
+            board[index]=window._onlinePlayerSymbol;
+            updateBoard();
+            
+            if(checkWinner(window._onlinePlayerSymbol)){
+                highlightWinCells(window._onlinePlayerSymbol);
+                setStatus('🎉 Вы выиграли!');
+                spawnConfetti();
+                gameActive=false;
+                broadcastMove(window._onlinePlayerSymbol);
+                return;
+            }
+            if(isBoardFull()){setStatus('🤝 Ничья!');gameActive=false;broadcastMove(null);return;}
+            
+            waitingForOpponent=true;
+            setStatus('🎯 Ход соперника');
+            broadcastMove(null);
         }
 
         updateBoard();
