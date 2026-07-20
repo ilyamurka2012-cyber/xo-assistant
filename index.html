@@ -16,7 +16,6 @@
             --o: #5b9eff;
             --accent: #b347ea;
             --accent2: #00e5a0;
-            --gold: #ffd166;
             --border: #1a1a35;
             --cell: #0d0d25;
         }
@@ -34,7 +33,7 @@
             position: relative;
         }
         
-        /* Космический фон */
+        /* Звёзды */
         .stars {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -47,87 +46,73 @@
             animation: twinkle ease-in-out infinite;
         }
         @keyframes twinkle {
-            0%,100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.8); }
+            0%,100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(2); }
         }
         
-        /* Сатурн */
+        /* Сатурн — теперь видно */
         .saturn-container {
             position: fixed;
-            bottom: -180px;
-            right: -120px;
+            bottom: -100px;
+            right: -60px;
             z-index: 0;
             pointer-events: none;
             animation: saturnFloat 20s ease-in-out infinite;
         }
-        .saturn {
-            width: 260px;
-            height: 260px;
-            position: relative;
-        }
         .saturn-planet {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle at 40% 40%, #f5d5a0, #c4944a, #8b5e2b);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 35% 35%, #f5d5a0, #c4944a, #8b5e2b);
             border-radius: 50%;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 60px rgba(245,213,160,0.3), inset 0 -10px 20px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 40px rgba(245,213,160,0.4), inset 0 -8px 15px rgba(0,0,0,0.5);
         }
         .saturn-ring {
-            width: 200px;
-            height: 200px;
-            border: 12px solid transparent;
-            border-top: 8px solid rgba(245,213,160,0.6);
-            border-right: 8px solid rgba(210,180,140,0.4);
-            border-bottom: 4px solid rgba(245,213,160,0.2);
-            border-radius: 50%;
             position: absolute;
             top: 50%; left: 50%;
+            width: 160px;
+            height: 160px;
+            border: 6px solid rgba(245,213,160,0.5);
+            border-top: 8px solid rgba(245,213,160,0.7);
+            border-bottom: 3px solid rgba(245,213,160,0.2);
+            border-radius: 50%;
             transform: translate(-50%, -50%) rotateX(75deg);
-            box-shadow: 0 0 30px rgba(245,213,160,0.2);
-            animation: ringGlow 4s ease-in-out infinite;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(245,213,160,0.3);
+            animation: ringGlow 3s ease-in-out infinite;
         }
         @keyframes ringGlow {
             0%,100% { box-shadow: 0 0 20px rgba(245,213,160,0.2); }
-            50% { box-shadow: 0 0 50px rgba(245,213,160,0.5); }
+            50% { box-shadow: 0 0 45px rgba(245,213,160,0.5); }
         }
         @keyframes saturnFloat {
             0%,100% { transform: translate(0,0) rotate(-5deg); }
-            25% { transform: translate(-20px,-15px) rotate(-3deg); }
-            50% { transform: translate(-10px,-30px) rotate(-8deg); }
-            75% { transform: translate(10px,-10px) rotate(-4deg); }
+            50% { transform: translate(-15px,-25px) rotate(-8deg); }
         }
         
-        /* Небула */
+        /* Туманности */
         .nebula {
             position: fixed;
-            top: -200px;
-            left: -150px;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(ellipse, rgba(179,71,234,0.15) 0%, transparent 70%);
+            top: -150px; left: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(ellipse, rgba(179,71,234,0.12) 0%, transparent 70%);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            animation: nebulaPulse 8s ease-in-out infinite;
+            pointer-events: none; z-index: 0;
+            animation: nebPulse 8s ease-in-out infinite;
         }
         .nebula2 {
             position: fixed;
-            bottom: -150px;
-            left: 30%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(ellipse, rgba(255,68,114,0.1) 0%, transparent 70%);
+            bottom: -100px; left: 30%;
+            width: 350px; height: 350px;
+            background: radial-gradient(ellipse, rgba(255,68,114,0.08) 0%, transparent 70%);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            animation: nebulaPulse 10s ease-in-out 2s infinite;
+            pointer-events: none; z-index: 0;
+            animation: nebPulse 10s ease-in-out 2s infinite;
         }
-        @keyframes nebulaPulse {
-            0%,100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.3); opacity: 1; }
+        @keyframes nebPulse {
+            0%,100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.4); opacity: 1; }
         }
         
         .container {
@@ -138,7 +123,7 @@
             padding: 24px 20px;
             width: 95%;
             max-width: 440px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(179,71,234,0.1) inset;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
             backdrop-filter: blur(20px);
         }
         
@@ -146,8 +131,8 @@
             text-align: center; margin-bottom: 2px;
             font-size: 2.2em; font-weight: 700; letter-spacing: -1px;
         }
-        .logo .x { color: var(--x); text-shadow: 0 0 30px rgba(255,68,114,0.6); }
-        .logo .o { color: var(--o); text-shadow: 0 0 30px rgba(91,158,255,0.6); }
+        .logo .x { color: var(--x); text-shadow: 0 0 30px rgba(255,68,114,0.5); }
+        .logo .o { color: var(--o); text-shadow: 0 0 30px rgba(91,158,255,0.5); }
         
         .badge {
             text-align: center; font-size: 0.6em; font-weight: 600;
@@ -186,7 +171,7 @@
         .settings-row .btn:hover { border-color: var(--accent); }
         .settings-row .btn.sel-x { background: var(--x); border-color: var(--x); color: #fff; box-shadow: 0 0 20px rgba(255,68,114,0.4); }
         .settings-row .btn.sel-o { background: var(--o); border-color: var(--o); color: #fff; box-shadow: 0 0 20px rgba(91,158,255,0.4); }
-        .settings-row .btn.sel-first { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(179,71,234,0.4); }
+        .settings-row .btn.sel-first { background: var(--accent); border-color: var(--accent); color: #fff; }
         
         .label-sm {
             font-size: 0.6em; font-weight: 600; color: var(--muted);
@@ -235,14 +220,32 @@
             100% { transform: scale(1.06); box-shadow: 0 0 30px rgba(0,229,160,0.5); }
         }
         
-        .turn-bar { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
+        /* Индикатор хода — крупный, заметный */
+        .turn-bar {
+            display: flex; gap: 10px; justify-content: center; align-items: center;
+            margin-bottom: 10px; font-size: 0.75em; font-weight: 600;
+            color: var(--muted);
+        }
         .turn-dot {
-            width: 14px; height: 14px; border-radius: 50%;
-            background: var(--cell); border: 2px solid var(--border);
+            width: 16px; height: 16px; border-radius: 50%;
+            border: 2px solid var(--border);
             transition: all 0.3s;
         }
-        .turn-dot.active-you { background: var(--x); border-color: var(--x); box-shadow: 0 0 15px rgba(255,68,114,0.5); }
-        .turn-dot.active-them { background: var(--o); border-color: var(--o); box-shadow: 0 0 15px rgba(91,158,255,0.5); }
+        .turn-dot.active-you {
+            background: var(--x); border-color: var(--x);
+            box-shadow: 0 0 20px rgba(255,68,114,0.6);
+            width: 20px; height: 20px;
+        }
+        .turn-dot.active-them {
+            background: var(--o); border-color: var(--o);
+            box-shadow: 0 0 20px rgba(91,158,255,0.6);
+            width: 20px; height: 20px;
+        }
+        .turn-label {
+            font-size: 0.7em; letter-spacing: 0.5px;
+        }
+        .turn-label.you { color: var(--x); }
+        .turn-label.them { color: var(--o); }
         
         .status-msg {
             text-align: center; padding: 11px; margin: 8px 0;
@@ -336,15 +339,12 @@
     </style>
 </head>
 <body>
-    <!-- Космический фон -->
     <div class="stars" id="stars"></div>
     <div class="nebula"></div>
     <div class="nebula2"></div>
     <div class="saturn-container">
-        <div class="saturn">
-            <div class="saturn-planet"></div>
-            <div class="saturn-ring"></div>
-        </div>
+        <div class="saturn-planet"></div>
+        <div class="saturn-ring"></div>
     </div>
     
     <div class="container">
@@ -376,8 +376,10 @@
         <div class="room-box hidden" id="roomBox"></div>
         
         <div class="turn-bar hidden" id="turnBar">
+            <span class="turn-label you">ВЫ</span>
             <div class="turn-dot active-you" id="dY"></div>
             <div class="turn-dot" id="dO"></div>
+            <span class="turn-label them">СОПЕРНИК</span>
         </div>
         
         <div class="board-wrap">
@@ -399,29 +401,12 @@
         <div class="status-msg" id="status">Выберите режим</div>
         
         <button class="btn-main" onclick="resetGame()">Новая игра</button>
-        <div class="footer"><span onclick="rickroll()">made by sonki</span></div>
+        <div class="footer"><span onclick="window.open('https://youtu.be/dQw4w9WgXcQ','_blank')">made by sonki</span></div>
     </div>
     
     <script>
         // Звёзды
-        (function(){
-            const c=document.getElementById('stars');
-            for(let i=0;i<120;i++){
-                const s=document.createElement('div');
-                s.className='star';
-                s.style.left=Math.random()*100+'%';
-                s.style.top=Math.random()*100+'%';
-                s.style.width=s.style.height=(Math.random()*2+0.5)+'px';
-                s.style.animationDuration=(Math.random()*3+2)+'s';
-                s.style.animationDelay=Math.random()*3+'s';
-                c.appendChild(s);
-            }
-        })();
-        
-        // Рикролл
-        function rickroll(){
-            window.open('https://youtu.be/dQw4w9WgXcQ?si=DC5XtVJFjfdoE-Ma','_blank');
-        }
+        (function(){const c=document.getElementById('stars');for(let i=0;i<150;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.width=s.style.height=(Math.random()*2+0.5)+'px';s.style.animationDuration=(Math.random()*3+2)+'s';s.style.animationDelay=Math.random()*3+'s';c.appendChild(s)}})();
         
         let pSym=null,oSym=null,first=null;
         let board=['','','','','','','','',''];
@@ -440,7 +425,6 @@
             else{sb.classList.remove('hidden');fb.classList.remove('hidden');rb.classList.add('hidden');tb.classList.add('hidden');cb.classList.add('hidden');pSym=null;oSym=null;first=null;document.getElementById('bX').className='btn';document.getElementById('bO').className='btn';document.getElementById('bMe').className='btn';document.getElementById('bOp').className='btn';setS('Выберите настройки')}
         }
         
-        // Авто-онлайн
         (function(){const p=new URLSearchParams(window.location.search);if(p.get('room'))sw('online');})();
         
         function upTurn(s){
@@ -458,18 +442,8 @@
         }
         
         function makeHint(){if(!active)return;const m=bestMove();if(m!==null){hintCell(m);setS('Ход на клетку '+(m+1));setTimeout(()=>{board[m]=pSym;updateB();clearH();if(win(pSym)){hw(pSym);setS('Победа!');active=false;return}if(full()){setS('Ничья');active=false;return}setS('Ход соперника');waiting=true},700)}}
-        
         function aiMove(){if(Math.random()<0.2){const e=[];for(let i=0;i<9;i++)if(board[i]==='')e.push(i);if(e.length)return e[Math.floor(Math.random()*e.length)]}return bestMove()}
-        
-        function bestMove(){
-            for(let i=0;i<9;i++){if(board[i]===''){board[i]=pSym;if(win(pSym)){board[i]='';return i}board[i]=''}}
-            for(let i=0;i<9;i++){if(board[i]===''){board[i]=oSym;if(win(oSym)){board[i]='';return i}board[i]=''}}
-            if(board[4]==='')return 4;
-            for(let c of[0,2,6,8])if(board[c]==='')return c;
-            for(let i=0;i<9;i++)if(board[i]==='')return i;
-            return null;
-        }
-        
+        function bestMove(){for(let i=0;i<9;i++){if(board[i]===''){board[i]=pSym;if(win(pSym)){board[i]='';return i}board[i]=''}}for(let i=0;i<9;i++){if(board[i]===''){board[i]=oSym;if(win(oSym)){board[i]='';return i}board[i]=''}}if(board[4]==='')return 4;for(let c of[0,2,6,8])if(board[c]==='')return c;for(let i=0;i<9;i++)if(board[i]==='')return i;return null}
         function win(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return p.some(w=>w.every(i=>board[i]===s))}
         function hw(s){const p=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(let w of p){if(w.every(i=>board[i]===s)){document.querySelectorAll('.cell').forEach((c,i)=>{if(w.includes(i))c.classList.add('win-cell')});break}}}
         function full(){return board.every(c=>c!=='')}
@@ -477,98 +451,28 @@
         function clearH(){document.querySelectorAll('.cell').forEach(c=>c.classList.remove('hint','win-cell'))}
         function updateB(){document.querySelectorAll('.cell').forEach((c,i)=>{c.textContent=board[i];c.className='cell';if(board[i]==='X')c.classList.add('X');if(board[i]==='O')c.classList.add('O')})}
         function setS(m){document.getElementById('status').textContent=m}
-        
         function chSym(s){if(mode!=='calc'||active)return;pSym=s;oSym=s==='X'?'O':'X';document.getElementById('bX').className=s==='X'?'btn sel-x':'btn';document.getElementById('bO').className=s==='O'?'btn sel-o':'btn';if(first)startCalc()}
         function chFirst(w){if(mode!=='calc'||active)return;first=w;document.getElementById('bMe').className=w==='me'?'btn sel-first':'btn';document.getElementById('bOp').className=w==='opp'?'btn sel-first':'btn';if(pSym)startCalc()}
         function startCalc(){active=true;board=['','','','','','','','',''];waiting=false;updateB();clearH();if(first==='opp'){setS('Ход соперника');waiting=true}else{setS('Просчитываю...');setTimeout(()=>makeHint(),500)}}
         
         function resetGame(){
             board=['','','','','','','','',''];updateB();clearH();
-            if(mode==='online'){
-                active=true;waiting=_pid==='O';
-                upTurn(waiting?'O':_pid);
-                setS(waiting?'Ход соперника':'Ваш ход');
-                broadcast({action:'reset'});
-                if(!waiting) broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X'});
-            }else if(mode==='ai'){active=true;pSym='X';oSym='O';setS('Ваш ход')}
+            if(mode==='online'){active=true;waiting=_pid==='O';upTurn(waiting?'O':_pid);setS(waiting?'Ход соперника':'Ваш ход');broadcast({action:'reset'});if(!waiting)broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X'});}
+            else if(mode==='ai'){active=true;pSym='X';oSym='O';setS('Ваш ход')}
             else if(mode==='friend'){active=true;upTurn('X');setS('Ходит ✕')}
             else{active=false;waiting=false;if(pSym&&first)startCalc();else setS('Выберите настройки')}
         }
         
-        // Online
-        function initOnline(){
-            if(!window.supabase){document.getElementById('roomBox').innerHTML='<div class="room-box">Загрузка...</div>';loadSB();return}
-            setupOL();
-        }
-        function loadSB(){
-            const s=document.createElement('script');
-            s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            s.onload=()=>{window.supabase=supabase.createClient('https://mvnmqtvdazrrcrufaely.supabase.co','sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7');setupOL()};
-            document.head.appendChild(s);
-        }
-        function setupOL(){
-            const p=new URLSearchParams(window.location.search),j=p.get('room');
-            if(j){_rid=j;_pid='O';joinRoom();}
-            else{_rid=Math.random().toString(36).substr(2,6);_pid='X';createRoom();}
-        }
-        async function createRoom(){
-            const l=window.location.origin+window.location.pathname+'?room='+_rid;
-            document.getElementById('roomBox').innerHTML=`<div class="room-box">Отправьте ссылку сопернику<br><div class="code">${_rid}</div><input value="${l}" readonly onclick="this.select()"><button class="btn-copy" onclick="copyLink()">Копировать ссылку</button></div>`;
-            try{await window.supabase.from('games').upsert({id:_rid,board:'["","","","","","","","",""]',turn:'X',chat:'[]',status:'waiting'})}catch(e){}
-            subRoom();active=true;upTurn('X');setS('Ожидание соперника...');
-        }
-        async function joinRoom(){
-            try{
-                const {data}=await window.supabase.from('games').select('*').eq('id',_rid).single();
-                if(data){
-                    await window.supabase.from('games').update({status:'playing'}).eq('id',_rid);
-                    document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';
-                    setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden');document.getElementById('turnBar').classList.remove('hidden')},1500);
-                    subRoom();active=true;waiting=true;upTurn('X');setS('Ход соперника (✕)');
-                    // Уведомляем хоста
-                    broadcast({action:'joined'});
-                }else document.getElementById('roomBox').innerHTML='<div class="room-box">Комната не найдена</div>';
-            }catch(e){document.getElementById('roomBox').innerHTML='<div class="room-box">Ошибка</div>';}
-        }
-        function subRoom(){
-            if(_oc) window.supabase.removeChannel(_oc);
-            _oc=window.supabase.channel('room_'+_rid)
-            .on('broadcast',{event:'move'},(p)=>{
-                const d=p.payload;
-                if(d.action==='joined'){
-                    // Хост узнаёт что кто-то подключился
-                    document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';
-                    setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden');document.getElementById('turnBar').classList.remove('hidden')},1500);
-                    return;
-                }
-                if(d.action==='reset'){
-                    board=['','','','','','','','',''];updateB();clearH();
-                    active=true;waiting=_pid==='O';
-                    upTurn(waiting?'O':_pid);
-                    setS(waiting?'Ход соперника':'Ваш ход');
-                    return;
-                }
-                board=d.board;updateB();clearH();
-                if(d.winner){hw(d.winner);setS(d.winner===_pid?'Вы победили!':'Соперник победил');active=false}
-                else if(full()){setS('Ничья');active=false}
-                else{waiting=d.turn!==_pid;upTurn(d.turn);setS(waiting?'Ход соперника':'Ваш ход')}
-            })
-            .on('broadcast',{event:'chat'},(p)=>{
-                const m=p.payload,c=document.getElementById('chatMsgs'),cl=m.player===_pid?'chat-msg me':'chat-msg they';
-                c.innerHTML+=`<div class="${cl}"><b>${m.player===_pid?'Вы':'Соперник'}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight;
-            })
-            .subscribe();
-        }
+        function initOnline(){if(!window.supabase){document.getElementById('roomBox').innerHTML='<div class="room-box">Загрузка...</div>';loadSB();return}setupOL()}
+        function loadSB(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';s.onload=()=>{window.supabase=supabase.createClient('https://mvnmqtvdazrrcrufaely.supabase.co','sb_publishable_oVIxgyYQvjTUkXJ4QQ24CQ_30pbjVm7');setupOL()};document.head.appendChild(s)}
+        function setupOL(){const p=new URLSearchParams(window.location.search),j=p.get('room');if(j){_rid=j;_pid='O';joinRoom()}else{_rid=Math.random().toString(36).substr(2,6);_pid='X';createRoom()}}
+        async function createRoom(){const l=window.location.origin+window.location.pathname+'?room='+_rid;document.getElementById('roomBox').innerHTML=`<div class="room-box">Отправьте ссылку сопернику<br><div class="code">${_rid}</div><input value="${l}" readonly onclick="this.select()"><button class="btn-copy" onclick="copyLink()">Копировать ссылку</button></div>`;try{await window.supabase.from('games').upsert({id:_rid,board:'["","","","","","","","",""]',turn:'X',chat:'[]',status:'waiting'})}catch(e){}subRoom();active=true;upTurn('X');setS('Ожидание соперника...')}
+        async function joinRoom(){try{const {data}=await window.supabase.from('games').select('*').eq('id',_rid).single();if(data){await window.supabase.from('games').update({status:'playing'}).eq('id',_rid);document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden')},1500);subRoom();active=true;waiting=true;upTurn('X');setS('Ход соперника (✕)');broadcast({action:'joined'});}else document.getElementById('roomBox').innerHTML='<div class="room-box">Комната не найдена</div>'}catch(e){document.getElementById('roomBox').innerHTML='<div class="room-box">Ошибка</div>'}}
+        function subRoom(){if(_oc)window.supabase.removeChannel(_oc);_oc=window.supabase.channel('room_'+_rid).on('broadcast',{event:'move'},(p)=>{const d=p.payload;if(d.action==='joined'){document.getElementById('roomBox').innerHTML='<div class="room-box">Соперник подключен!</div>';setTimeout(()=>{document.getElementById('roomBox').classList.add('hidden')},1500);return}if(d.action==='reset'){board=['','','','','','','','',''];updateB();clearH();active=true;waiting=_pid==='O';upTurn(waiting?'O':_pid);setS(waiting?'Ход соперника':'Ваш ход');return}board=d.board;updateB();clearH();if(d.winner){hw(d.winner);setS(d.winner===_pid?'Вы победили!':'Соперник победил');active=false}else if(full()){setS('Ничья');active=false}else{waiting=d.turn!==_pid;upTurn(d.turn);setS(waiting?'Ход соперника':'Ваш ход')}}).on('broadcast',{event:'chat'},(p)=>{const m=p.payload,c=document.getElementById('chatMsgs'),cl=m.player===_pid?'chat-msg me':'chat-msg they';c.innerHTML+=`<div class="${cl}"><b>${m.player===_pid?'Вы':'Соперник'}:</b> ${m.text}</div>`;c.scrollTop=c.scrollHeight}).subscribe()}
         function copyLink(){const i=document.querySelector('.room-box input');if(i){i.select();navigator.clipboard.writeText(i.value);setS('Ссылка скопирована!')}}
         async function sendChat(){const i=document.getElementById('chatIn'),t=i.value.trim();if(!t||!_oc)return;await _oc.send({type:'broadcast',event:'chat',payload:{player:_pid,text:t}});const c=document.getElementById('chatMsgs');c.innerHTML+=`<div class="chat-msg me"><b>Вы:</b> ${t}</div>`;c.scrollTop=c.scrollHeight;i.value=''}
         async function broadcast(d){if(!_oc)return;await _oc.send({type:'broadcast',event:'move',payload:d})}
-        function onlineClick(i){
-            board[i]=_pid;updateB();
-            if(win(_pid)){hw(_pid);setS('Вы победили!');active=false;broadcast({action:'move',board:board,turn:_pid,winner:_pid});return}
-            if(full()){setS('Ничья');active=false;broadcast({action:'move',board:board,turn:_pid,winner:null});return}
-            waiting=true;upTurn(_pid==='X'?'O':'X');setS('Ход соперника');
-            broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X',winner:null});
-        }
+        function onlineClick(i){board[i]=_pid;updateB();if(win(_pid)){hw(_pid);setS('Вы победили!');active=false;broadcast({action:'move',board:board,turn:_pid,winner:_pid});return}if(full()){setS('Ничья');active=false;broadcast({action:'move',board:board,turn:_pid,winner:null});return}waiting=true;upTurn(_pid==='X'?'O':'X');setS('Ход соперника');broadcast({action:'move',board:board,turn:_pid==='X'?'O':'X',winner:null})}
         
         updateB();setS('Выберите режим');
     </script>
