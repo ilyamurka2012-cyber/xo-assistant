@@ -24,7 +24,6 @@
             position: relative;
         }
 
-        /* Анимированный градиентный фон */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -43,18 +42,11 @@
         }
 
         @keyframes bgShift {
-            0% {
-                transform: scale(1) rotate(0deg);
-            }
-            50% {
-                transform: scale(1.5) rotate(5deg);
-            }
-            100% {
-                transform: scale(1.2) rotate(-5deg);
-            }
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.5) rotate(5deg); }
+            100% { transform: scale(1.2) rotate(-5deg); }
         }
 
-        /* Сетка */
         .grid-overlay {
             position: fixed;
             top: 0;
@@ -74,7 +66,6 @@
             100% { transform: translate(40px, 40px); }
         }
 
-        /* Частицы */
         .particles-container {
             position: fixed;
             top: 0;
@@ -96,16 +87,13 @@
                 transform: translateY(100vh) scale(0) rotate(0deg);
                 opacity: 0;
             }
-            20% {
-                opacity: 1;
-            }
+            20% { opacity: 1; }
             100% {
                 transform: translateY(-100px) scale(1.5) rotate(720deg);
                 opacity: 0;
             }
         }
 
-        /* Неоновые кольца */
         .neon-rings {
             position: fixed;
             top: 50%;
@@ -150,17 +138,10 @@
         }
 
         @keyframes ringPulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 1;
-            }
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
         }
 
-        /* Основной контейнер */
         .container {
             position: relative;
             z-index: 10;
@@ -179,19 +160,10 @@
         }
 
         @keyframes containerGlow {
-            0% {
-                box-shadow: 
-                    0 0 50px rgba(255, 0, 110, 0.3),
-                    0 0 100px rgba(58, 134, 255, 0.2);
-            }
-            100% {
-                box-shadow: 
-                    0 0 80px rgba(131, 56, 236, 0.4),
-                    0 0 150px rgba(255, 190, 11, 0.3);
-            }
+            0% { box-shadow: 0 0 50px rgba(255, 0, 110, 0.3), 0 0 100px rgba(58, 134, 255, 0.2); }
+            100% { box-shadow: 0 0 80px rgba(131, 56, 236, 0.4), 0 0 150px rgba(255, 190, 11, 0.3); }
         }
 
-        /* Заголовок */
         .title {
             text-align: center;
             margin-bottom: 30px;
@@ -203,7 +175,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradientShift 5s ease infinite;
-            text-shadow: none;
             letter-spacing: 5px;
         }
 
@@ -222,7 +193,6 @@
             letter-spacing: 3px;
         }
 
-        /* Блоки настроек */
         .settings-block {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -252,7 +222,6 @@
             gap: 10px;
         }
 
-        /* Кнопки */
         .btn {
             flex: 1;
             padding: 15px;
@@ -321,7 +290,6 @@
             50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
         }
 
-        /* Игровое поле */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -432,17 +400,10 @@
         }
 
         @keyframes winCelebrate {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-            }
-            100% {
-                transform: scale(1.1);
-                box-shadow: 0 0 60px rgba(255, 255, 255, 0.8), 0 0 100px rgba(255, 255, 255, 0.4);
-            }
+            0% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
+            100% { transform: scale(1.1); box-shadow: 0 0 60px rgba(255, 255, 255, 0.8), 0 0 100px rgba(255, 255, 255, 0.4); }
         }
 
-        /* Статус */
         .status {
             text-align: center;
             padding: 15px;
@@ -459,15 +420,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: statusPulse 3s ease-in-out infinite;
         }
 
-        @keyframes statusPulse {
-            0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
-            50% { border-color: rgba(255, 255, 255, 0.3); }
-        }
-
-        /* Кнопка сброса */
         .reset-btn {
             width: 100%;
             padding: 15px;
@@ -502,12 +456,6 @@
             letter-spacing: 3px;
             font-weight: 400;
         }
-
-        /* Иконки в кнопках */
-        .btn-icon {
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
     </style>
 </head>
 <body>
@@ -522,17 +470,13 @@
 
     <div class="container">
         <div class="title">XO</div>
-        <div class="subtitle">ASSISTANT</div>
+        <div class="subtitle">НЕПОБЕДИМЫЙ ASSISTANT</div>
 
         <div class="settings-block">
             <div class="settings-label">🎮 Вы играете за</div>
             <div class="button-row">
-                <button class="btn" id="btnX" onclick="chooseSymbol('X')">
-                    <span class="btn-icon">✕</span> Крестик
-                </button>
-                <button class="btn" id="btnO" onclick="chooseSymbol('O')">
-                    <span class="btn-icon">○</span> Нолик
-                </button>
+                <button class="btn" id="btnX" onclick="chooseSymbol('X')">✕ Крестик</button>
+                <button class="btn" id="btnO" onclick="chooseSymbol('O')">○ Нолик</button>
             </div>
         </div>
 
@@ -564,7 +508,6 @@
     </div>
 
     <script>
-        // Создание частиц
         function createParticles() {
             const container = document.getElementById('particles');
             const colors = ['#ff006e', '#3a86ff', '#8338ec', '#ffbe0b', '#fb5607', '#00f5d4'];
@@ -668,13 +611,166 @@
             }
         }
 
+        // УЛУЧШЕННЫЙ АЛГОРИТМ - НЕПОБЕДИМЫЙ
+        function getBestMove() {
+            // 1. Проверяем, можем ли мы выиграть сейчас
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = playerSymbol;
+                    if (checkWinner(playerSymbol)) {
+                        board[i] = '';
+                        return i; // Немедленная победа!
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // 2. Блокируем победный ход соперника
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = opponentSymbol;
+                    if (checkWinner(opponentSymbol)) {
+                        board[i] = '';
+                        return i; // Блокируем угрозу!
+                    }
+                    board[i] = '';
+                }
+            }
+            
+            // 3. Если центр свободен - занимаем его
+            if (board[4] === '') {
+                return 4;
+            }
+            
+            // 4. Если мы играем крестиками и это первый ход, а центр занят - занимаем угол
+            if (playerSymbol === 'X' && countMoves() === 1) {
+                const corners = [0, 2, 6, 8];
+                for (let corner of corners) {
+                    if (board[corner] === '') {
+                        return corner;
+                    }
+                }
+            }
+            
+            // 5. Проверяем, не создаёт ли соперник вилку
+            const forkBlock = blockOpponentFork();
+            if (forkBlock !== null) {
+                return forkBlock;
+            }
+            
+            // 6. Создаём свою вилку
+            const forkCreate = createFork();
+            if (forkCreate !== null) {
+                return forkCreate;
+            }
+            
+            // 7. Занимаем противоположный угол
+            const oppositeCorner = getOppositeCorner();
+            if (oppositeCorner !== null) {
+                return oppositeCorner;
+            }
+            
+            // 8. Занимаем любой свободный угол
+            const corners = [0, 2, 6, 8];
+            for (let corner of corners) {
+                if (board[corner] === '') {
+                    return corner;
+                }
+            }
+            
+            // 9. Занимаем любую свободную клетку
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    return i;
+                }
+            }
+            
+            return null;
+        }
+
+        function countMoves() {
+            return board.filter(cell => cell !== '').length;
+        }
+
+        function blockOpponentFork() {
+            // Проверяем все возможные ходы соперника, которые могут создать вилку
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = opponentSymbol;
+                    let winCount = 0;
+                    
+                    // Считаем, сколько победных линий создаст этот ход
+                    for (let j = 0; j < 9; j++) {
+                        if (board[j] === '') {
+                            board[j] = opponentSymbol;
+                            if (checkWinner(opponentSymbol)) {
+                                winCount++;
+                            }
+                            board[j] = '';
+                        }
+                    }
+                    
+                    board[i] = '';
+                    
+                    // Если ход создаёт больше одной победной линии - блокируем
+                    if (winCount >= 2) {
+                        return i;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function createFork() {
+            // Ищем ход, который создаст нам вилку
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = playerSymbol;
+                    let winCount = 0;
+                    
+                    for (let j = 0; j < 9; j++) {
+                        if (board[j] === '') {
+                            board[j] = playerSymbol;
+                            if (checkWinner(playerSymbol)) {
+                                winCount++;
+                            }
+                            board[j] = '';
+                        }
+                    }
+                    
+                    board[i] = '';
+                    
+                    if (winCount >= 2) {
+                        return i;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getOppositeCorner() {
+            const corners = [
+                { corner: 0, opposite: 8 },
+                { corner: 2, opposite: 6 },
+                { corner: 6, opposite: 2 },
+                { corner: 8, opposite: 0 }
+            ];
+            
+            for (let pair of corners) {
+                if (board[pair.corner] === opponentSymbol && board[pair.opposite] === '') {
+                    return pair.opposite;
+                }
+            }
+            return null;
+        }
+
         function makePlayerMove() {
             if (!gameActive) return;
             
             const move = getBestMove();
             if (move !== null && move !== undefined) {
                 highlightCell(move);
-                setStatus(`💡 Ходите на подсвеченную клетку`);
+                setStatus(`💡 Ходите на подсвеченную клетку (${move + 1})`);
                 
                 setTimeout(() => {
                     board[move] = playerSymbol;
@@ -697,56 +793,6 @@
                     setStatus('🎯 Нажмите на клетку, куда пошёл соперник');
                     waitingForOpponent = true;
                 }, 1000);
-            }
-        }
-
-        function getBestMove() {
-            let bestScore = -Infinity;
-            let bestMove = null;
-
-            for (let i = 0; i < 9; i++) {
-                if (board[i] === '') {
-                    board[i] = playerSymbol;
-                    let score = minimax(board, 0, false);
-                    board[i] = '';
-                    
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = i;
-                    }
-                }
-            }
-            
-            return bestMove;
-        }
-
-        function minimax(board, depth, isMaximizing) {
-            if (checkWinner(playerSymbol)) return 10 - depth;
-            if (checkWinner(opponentSymbol)) return depth - 10;
-            if (isBoardFull()) return 0;
-
-            if (isMaximizing) {
-                let bestScore = -Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === '') {
-                        board[i] = playerSymbol;
-                        let score = minimax(board, depth + 1, false);
-                        board[i] = '';
-                        bestScore = Math.max(score, bestScore);
-                    }
-                }
-                return bestScore;
-            } else {
-                let bestScore = Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === '') {
-                        board[i] = opponentSymbol;
-                        let score = minimax(board, depth + 1, true);
-                        board[i] = '';
-                        bestScore = Math.min(score, bestScore);
-                    }
-                }
-                return bestScore;
             }
         }
 
